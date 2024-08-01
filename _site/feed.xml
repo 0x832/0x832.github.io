@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2024-07-21T18:27:28+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Hacktivo.io</title><subtitle>Posts sobre ciberseguridad y programación</subtitle><author><name>0x832</name></author><entry><title type="html">SnapBot - Python scripting</title><link href="http://localhost:4000/snapbot-python-scripting/" rel="alternate" type="text/html" title="SnapBot - Python scripting" /><published>2024-07-12T00:00:00+02:00</published><updated>2024-07-12T00:00:00+02:00</updated><id>http://localhost:4000/snapbot-python-scripting</id><content type="html" xml:base="http://localhost:4000/snapbot-python-scripting/"><![CDATA[<p><img src="/assets/images/script-python-SnapBot/SnapBot1.jpg" alt="" /></p>
+
+<p>Hola a todos, hoy les presentaré un pequeño script en Python que desarrollé hace unos días, llamado SnapBot . Este programa está diseñado para capturar imágenes utilizando la cámara web de tu ordenador y enviarlas directamente a un chat de Telegram que hayas configurado previamente. 
+<br /></p>
+
+<h1 id="requisitos">Requisitos</h1>
+<ul>
+  <li>
+    <p>Primero, necesitaremos crear tres archivos: <strong>SnapBot.pyw, config.py y webcam.py.</strong></p>
+
+    <ul>
+      <li>SnapBot.pyw: Con este script se ejecutara el programa</li>
+      <li>config.py: Con este otro configuraremos el TOKEN y el ID para que nos llegue la foto al telegram</li>
+      <li>webcam.py: Y en este script escribiremos la mayoria del codigo
+<br /></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="desarrollo-del-script">Desarrollo del Script</h1>
+<h3 id="1-configuración-del-configpy-"><strong>1. Configuración del config.py :</strong></h3>
+
+<p><strong>Descripción:</strong>
+  Este archivo contiene la configuración necesaria para que el bot de Telegram funcione, incluyendo el token de autenticación y el identificador del chat.
+<br /></p>
+
+<p>Primero, vamos a configurar el archivo <strong>config.py</strong> para definir el <strong>TOKEN</strong> y el <strong>CHAT_ID</strong> necesarios para enviar la foto a Telegram.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      <span class="k">def</span> <span class="nf">get_telegram_config</span><span class="p">():</span>
+            <span class="k">return</span> <span class="p">{</span>
+            <span class="s">'TOKEN'</span><span class="p">:</span> <span class="s">''</span><span class="p">,</span> <span class="c1"># Token de autenticación de la API de Telegram
+</span>            <span class="s">'CHAT_ID'</span><span class="p">:</span> <span class="s">''</span> <span class="c1"># Identificador del chat al que se enviará la foto
+</span>            <span class="p">}</span>
+</code></pre></div></div>
+<p><br /></p>
+
+<h3 id="2-configuración-de-webcampy"><strong>2 Configuración de webcam.py</strong></h3>
+
+<p><strong>Descripción:</strong>
+  Este script se encarga de capturar una imagen desde la cámara web, codificarla y enviarla a Telegram. Aquí es donde se encuentra la mayor parte del código funcional.
+  <br /></p>
+
+<ul>
+  <li>
+    <h3 id="1--entramos-al-webcampy-para-importación-de-librerías-"><strong>1- Entramos al webcam.py para importación de Librerías :</strong></h3>
+    <p>En esta sección importaremos las librerias necesarias para que el script funcione.</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kn">import</span> <span class="nn">cv2</span> 
+  <span class="kn">import</span> <span class="nn">io</span> 
+  <span class="kn">import</span> <span class="nn">requests</span> 
+  <span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">get_telegram_config</span> 
+</code></pre></div>    </div>
+    <ul>
+      <li>
+        <p><strong>Import cv2:</strong> Para capturar y procesar imágenes desde la cámara web.</p>
+      </li>
+      <li>
+        <p><strong>Import io:</strong> Sirve para manejar datos de imagen en memoria.</p>
+      </li>
+      <li>
+        <p><strong>Import requests:</strong> Para enviar la imagen a Telegram a través de solicitudes HTTP</p>
+      </li>
+      <li>
+        <p><strong>Import from config import get_telegram_config:</strong> Para obtener la configuración del <code class="language-plaintext highlighter-rouge">config.py</code>
+<br /></p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <h3 id="2--llamada-al-configpy"><strong>2- Llamada al config.py:</strong></h3>
+    <p>En esta sección, explicaremos cómo se utiliza la función <code class="language-plaintext highlighter-rouge">get_telegram_config()</code> para obtener la configuración necesaria para enviar la imagen a Telegram.</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">def</span> <span class="nf">Captur_webcam</span><span class="p">():</span>
+        <span class="n">telegram_config</span> <span class="o">=</span> <span class="n">get_telegram_config</span><span class="p">()</span>
+        <span class="n">TOKEN</span> <span class="o">=</span> <span class="n">telegram_config</span><span class="p">[</span><span class="s">'TOKEN'</span><span class="p">]</span>
+        <span class="n">CHAT_ID</span> <span class="o">=</span> <span class="n">telegram_config</span><span class="p">[</span><span class="s">'CHAT_ID'</span><span class="p">]</span>
+</code></pre></div>    </div>
+    <ul>
+      <li>
+        <p><strong>get_telegram_config():</strong> Esta función, que se        encuentra en <code class="language-plaintext highlighter-rouge">config.py</code>, devuelve un diccionario con el <code class="language-plaintext highlighter-rouge">TOKEN</code> y el <code class="language-plaintext highlighter-rouge">CHAT_ID</code> necesarios para interactuar con la API de Telegram.</p>
+      </li>
+      <li>
+        <p><strong>telegram_config:</strong> Al llamar a <code class="language-plaintext highlighter-rouge">get_telegram_config()</code>, obtenemos un diccionario con la configuración de Telegram.</p>
+      </li>
+      <li>
+        <p><strong>TOKEN:</strong> Se extrae de la configuración <code class="language-plaintext highlighter-rouge">telegram_config</code> para autenticar el bot en la API de Telegram.</p>
+      </li>
+      <li>
+        <p><strong>CHAT_ID:</strong> Se extrae de la configuración <code class="language-plaintext highlighter-rouge">telegram_config</code> para especificar el chat al que se enviará la imagen.
+<br /></p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <h3 id="3--captura-de-imagen-con-la-webcam"><strong>3- Captura de imagen con la webcam:</strong></h3>
+    <p>A continuación, describiremos cómo usar <code class="language-plaintext highlighter-rouge">OpenCV</code> para tomar una foto con la webcam.</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">):</span>
+        <span class="n">cap</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+</code></pre></div>    </div>
+    <ul>
+      <li>
+        <p><strong>cv2.VideoCapture(0):</strong> Inicia la webcam predeterminada de la computadora.</p>
+      </li>
+      <li>
+        <p><strong>for i in range(30): cap.read():</strong> Realiza 30 lecturas iniciales para estabilizar la cámara, ajustando parámetros automáticos como la exposición y el balance de blancos.</p>
+      </li>
+      <li>
+        <p><strong>ret, frame = cap.read():</strong> Captura una imagen de la webcam, donde <code class="language-plaintext highlighter-rouge">ret</code> indica si la captura fue exitosa y <code class="language-plaintext highlighter-rouge">frame</code> contiene la imagen obtenida.
+<br /></p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <h3 id="4--codificación-y-almacenamiento-de-la-imagen"><strong>4- Codificación y almacenamiento de la imagen:</strong></h3>
+    <p>En esta sección, detallaremos el proceso de codificación y almacenamiento de la imagen capturada desde la webcam utilizando OpenCV y la biblioteca io.</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nb">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="p">.</span><span class="n">BytesIO</span><span class="p">()</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">encoded_image</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imencode</span><span class="p">(</span><span class="s">'.jpg'</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+    <span class="nb">buffer</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">encoded_image</span><span class="p">.</span><span class="n">tobytes</span><span class="p">())</span>
+    <span class="n">cap</span><span class="p">.</span><span class="n">release</span><span class="p">()</span>
+</code></pre></div>    </div>
+
+    <ul>
+      <li>
+        <p><strong>buffer = io.BytesIO():</strong> Crea un <code class="language-plaintext highlighter-rouge">buffer en memoria</code> que actuará como un archivo para almacenar la imagen codificada en memoria.</p>
+      </li>
+      <li>
+        <p><strong>cv2.imencode(‘.jpg’, frame):</strong> Codifica la imagen capturada <code class="language-plaintext highlighter-rouge">(frame)</code> en formato JPEG.</p>
+      </li>
+      <li>
+        <p><strong>buffer.write(encoded_image.tobytes()):</strong> Escribe los datos de la imagen codificada en el <code class="language-plaintext highlighter-rouge">buffer</code>, convirtiendo primero los datos a <code class="language-plaintext highlighter-rouge">bytes</code> con <code class="language-plaintext highlighter-rouge">tobytes()</code>.</p>
+      </li>
+      <li>
+        <p><strong>cap.release():</strong> Libera la cámara, cerrando la conexión con la webcam.
+<br /></p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <h3 id="5--envío-de-la-imagen-a-telegram"><strong>5- Envío de la imagen a Telegram:</strong></h3>
+    <p>En esta sección, explicaremos cómo enviar la imagen capturada a Telegram utilizando la API de Telegram y la biblioteca requests.</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="n">archivos</span> <span class="o">=</span> <span class="p">{</span><span class="s">'photo'</span><span class="p">:</span> <span class="p">(</span><span class="s">'webcam.jpg'</span><span class="p">,</span> <span class="nb">buffer</span><span class="p">.</span><span class="n">getvalue</span><span class="p">())}</span>
+    <span class="n">datos</span> <span class="o">=</span> <span class="p">{</span><span class="s">'chat_id'</span><span class="p">:</span> <span class="n">CHAT_ID</span><span class="p">}</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s">'https://api.telegram.org/bot</span><span class="si">{</span><span class="n">TOKEN</span><span class="si">}</span><span class="s">/sendPhoto'</span>
+
+    <span class="n">respuesta</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">datos</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">archivos</span><span class="p">))</span>
+</code></pre></div>    </div>
+    <ul>
+      <li>
+        <p><strong>archivos = {‘photo’: (‘webcam.jpg’, buffer.getvalue())}:</strong> Prepara la imagen para enviar. ‘photo’ es el nombre del campo esperado por Telegram. ‘webcam.jpg’ es el nombre del archivo, y <code class="language-plaintext highlighter-rouge">buffer.getvalue()</code> obtiene los datos de la imagen.</p>
+      </li>
+      <li>
+        <p><strong>datos = {‘chat_id’: CHAT_ID}:</strong> Especifica el identificador del chat <code class="language-plaintext highlighter-rouge">(CHAT_ID)</code> al que se enviará la imagen.</p>
+      </li>
+      <li>
+        <p><strong>url = f’https://api.telegram.org/bot{TOKEN}/sendPhoto’:</strong> Crea la <code class="language-plaintext highlighter-rouge">URL</code> para enviar la foto usando el token del bot <code class="language-plaintext highlighter-rouge">(TOKEN).</code>
+<br /></p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <h3 id="6--verificación-del-envío"><strong>6- Verificación del envío:</strong></h3>
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">if</span> <span class="n">respuesta</span><span class="p">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Foto de la webcam enviada a Telegram"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Error al enviar la foto a Telegram."</span><span class="p">)</span>
+</code></pre></div>    </div>
+
+    <ul>
+      <li>
+        <p><strong>if respuesta.status_code == 200:</strong> Verifica si la solicitud fue exitosa. El código de estado 200 indica que la imagen se envió correctamente.</p>
+      </li>
+      <li>
+        <p><strong>print(“Foto de la webcam enviada a Telegram”):</strong> Muestra un mensaje de éxito si la solicitud fue exitosa.</p>
+      </li>
+      <li>
+        <p><strong>else:</strong> Si el código de estado no es 200, indica que hubo un error.</p>
+      </li>
+      <li>
+        <p><strong>print(“Error al enviar la foto a Telegram.”):</strong> Muestra un mensaje de error si la solicitud falló.
+<br /></p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>¡Perfecto! Ahora que hemos cubierto el proceso de captura, codificación y envío de la imagen, vamos a configurar el script que ejecutará todo el proceso. A continuación, veremos cómo configurar el archivo SnapBot.py para gestionar la ejecución del programa y conectar todo el código que hemos desarrollado.</p>
+
+<h3 id="8-configuración-en-snapbotpy"><strong>8. Configuración en SnapBot.py:</strong></h3>
+
+<p><strong>Descripción:</strong>
+  Este es el script principal que ejecuta el programa. Su extensión <code class="language-plaintext highlighter-rouge">.pyw</code> indica que se ejecutará sin abrir una ventana de consola en sistemas Windows.
+  <br /></p>
+
+<p>A continuación, configuraremos el archivo <strong>SnapBot.pyw</strong> para gestionar la captura de imágenes desde la cámara web.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="kn">import</span> <span class="nn">webcam</span> 
+
+    <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">webcam</span><span class="p">.</span><span class="n">Captur_webcam</span><span class="p">()</span> 
+        <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+        <span class="n">main</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p><strong>Import webcam:</strong> Se importa el módulo webcam para acceder a las funciones definidas en <code class="language-plaintext highlighter-rouge">webcam.py</code>.</p>
+
+<p><strong>main():</strong> Dentro de esta función, se llama a 
+  <strong>webcam.Captur_webcam():</strong> <code class="language-plaintext highlighter-rouge">webcam:</code> Hace referencia al archivo <code class="language-plaintext highlighter-rouge">webcam.py</code></p>
+
+<p><strong>Captur_webcam():</strong> Es una función definida dentro del archivo <code class="language-plaintext highlighter-rouge">webcam.py</code> que se encarga de capturar la imagen desde la cámara web.</p>
+
+<p><br /></p>
+
+<h1 id="hasta-aquí-llega-nuestro-artículo-explicativo-sobre-cómo-crear-snapbot">Hasta aquí llega nuestro artículo explicativo sobre cómo crear SnapBot.</h1>
+
+<p>Espero que les haya resultado útil y que la explicación haya sido clara. No olviden seguirme en <a href="https://github.com/0x832/">GitHub</a>, ya que iré subiendo nuevos repositorios. Si tienen alguna duda o no saben cómo hacer el script, pueden descargarlo desde <a href="https://github.com/0x832/SnapBot">mi repositorio</a>.</p>]]></content><author><name>0x832</name></author><category term="Python" /><category term="Programación" /><category term="Python" /><category term="Programación" /><category term="Srcripting" /><summary type="html"><![CDATA[Hola a todos, hoy les presentaré un pequeño script en Python que desarrollé hace unos días, llamado SnapBot . Este programa está diseñado para capturar imágenes utilizando la cámara web de tu ordenador y enviarlas directamente a un chat de Telegram que hayas configurado previamente.]]></summary></entry></feed>
