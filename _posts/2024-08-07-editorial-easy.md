@@ -81,9 +81,8 @@ Hola a todos, hoy les presentaré la resolución de una máquina **Hack the box 
     ![Untitled](/assets/images/2024-08-07-editorial-easy/Untitled.png)
     
   ## Ahora accedemos a la web para poder determinar que clase de vulnerabilidades podemos encontrar
-        
 
-    Vamos a acceder a la web, ya que como hemos visto anteriormente, el `puerto 80` está abierto
+  Vamos a acceder a la web, ya que como hemos visto anteriormente, el `puerto 80` está abierto
     
     Podemos observar varias cosas, pero si  accedemos a esta sección de la web podemos observar esto de aquí
 
