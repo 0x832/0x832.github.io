@@ -80,7 +80,7 @@ Hola a todos, hoy les presentaré la resolución de una máquina **Hack the box 
     
     ![Untitled](/assets/images/2024-08-07-editorial-easy/Untitled.png)
     
-    ## Ahora accedemos a la web para poder determinar que clase de vulnerabilidades podemos encontrar
+  ## Ahora accedemos a la web para poder determinar que clase de vulnerabilidades podemos encontrar
         
     Vamos a acceder a la web, ya que como hemos visto anteriormente, el `puerto 80` está abierto
     
@@ -99,7 +99,7 @@ Hola a todos, hoy les presentaré la resolución de una máquina **Hack the box 
     
     ![Untitled](/assets/images/2024-08-07-editorial-easy/Untitled%204.png)
     
-    Mandamos la petición y la interceptamos con `burp`. Una vez la hecho eso lo enviamos al `repeter` , al enviar la petición podemos observar que nos sale una ruta de una `imagen.jpg`
+    Mandamos la petición y la interceptamos con `burp`. Una vez hecho eso lo enviamos al `repeter` , al enviar la petición podemos observar que nos sale una ruta de una `imagen.jpg`
     
     ![Untitled](/assets/images/2024-08-07-editorial-easy/Untitled%205.png)
     
