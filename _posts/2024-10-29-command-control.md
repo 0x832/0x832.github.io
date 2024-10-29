@@ -1,6 +1,6 @@
 ---
 layout: single
-title: SnapBot - Python scripting
+title: Command & Control - Python scripting
 excerpt: "
 Hola a todos, hoy les presentaré un pequeño script en Python que desarrollé hace unos días, llamado Command and Control. Su función principal es permitir la ejecución remota de diferentes funciones del sistema Windows a través de un bot de Telegram."
 
