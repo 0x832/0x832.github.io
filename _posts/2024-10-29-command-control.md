@@ -48,9 +48,9 @@ Hola a todos, hoy les presentaré un pequeño script en Python que desarrollé h
     import telegram 
     from telegram.ext import Application, CommandHandler 
     import os 
-    from functools import wraps #Para guardar metadatos de funciones al crear los decoradores 
-    import pyautogui #Para la comunicación con la interfaz gráfica 
-    from io import BytesIO  # Para imágenes las imagenes como un archivo en memoria
+    from functools import wraps 
+    import pyautogui 
+    from io import BytesIO 
 
   ```
   <br>
@@ -163,7 +163,7 @@ Esta parte del código simplemente hace que, cuando tú inicias el bot **/info**
           application.add_handler(CommandHandler('lock', lock_screen))
           application.add_handler(CommandHandler('shutdown', shutdown))
           application.add_handler(CommandHandler('reboot', reboot))    
-          application.add_handler(CommandHandler('start', info))  # Añadimos el nuevo comando
+          application.add_handler(CommandHandler('start', info)) 
           
 
           application.run_polling()
@@ -179,5 +179,5 @@ Esta parte del código simplemente hace que, cuando tú inicias el bot **/info**
 
 # Hasta aquí llega nuestro artículo explicativo sobre cómo crear Command&control.
 
- Espero que les haya servido la explicación y que haya sido clara. No olviden seguirme en <a href="https://github.com/0x832/">GitHub</a>, ya que iré subiendo nuevos repositorios. Si tienen alguna duda o no saben cómo hacer el script, pueden descargarlo desde <a href="https://github.com/0x832/SnapBot">mi repositorio</a>. 
+ Espero que les haya servido la explicación y que haya sido clara. No olviden seguirme en <a href="https://github.com/0x832/">GitHub</a>, ya que iré subiendo nuevos repositorios.
 
