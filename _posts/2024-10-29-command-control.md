@@ -50,7 +50,6 @@ Hola a todos, hoy les presentaré un pequeño script en Python que desarrollé h
     import os 
     from functools import wraps 
     import pyautogui 
-    from io import BytesIO 
 
   ```
   <br>
@@ -66,9 +65,6 @@ Hola a todos, hoy les presentaré un pequeño script en Python que desarrollé h
   - **from functools import wraps:** Para guardar metadatos de funciones al crear los decoradores
 
   - **import pyautogui:** Para la comunicación con la interfaz gráfica
-
-  - **from io import BytesIO:** Para imágenes las imagenes como un archivo en memoria
-
 
 
 ### **2- Configuración del Token ,ID del bot :**
