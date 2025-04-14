@@ -18,6 +18,7 @@ tags:
   - SSRF
   - SSH 
   - ABUSO DE SUDOERS
+  - Hack the box 
 
 ---
 
