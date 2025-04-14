@@ -7,7 +7,7 @@ excerpt: "Hola a todos, hoy les presentaré la resolución de una máquina HackM
 date: 2025-04-12
 classes: wide
 header:
-  teaser: assets/images/2025-04-13-HackMyVM-Lia-easy/2.png
+  teaser: /assets/images/2025-04-13-HackMyVM-Lia-easy/2.png
   teaser_home_page: true
 categories:
   - HackMyVM
