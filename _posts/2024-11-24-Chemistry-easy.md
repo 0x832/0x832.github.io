@@ -15,7 +15,9 @@ categories:
   - CTF
 tags:  
   - CIF Malicioso
-  - LFI 
+  - LFI
+  - Hack the box 
+
 ---
 
 ![](/assets/images/2024-11-24-chemistry-easy/C)
