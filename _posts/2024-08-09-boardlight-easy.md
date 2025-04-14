@@ -18,6 +18,7 @@ tags:
   - Dolibar v17.0.0
   - SUID 
   - Exploit
+  - Hack the box 
 
 ---
 
