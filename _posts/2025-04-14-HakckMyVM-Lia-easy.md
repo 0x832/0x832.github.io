@@ -1,6 +1,6 @@
 ---
 layout: single
-title: Lias (Windows) Writeup
+title: Liar (Windows) Writeup
 excerpt: "Hola a todos, hoy les presentaré la resolución de una máquina HackMyVM de dificultad Easy. En esta máquina aprenderemos a enumerar y explotar el servicio SMB, y también a utilizar WinRM para obtener acceso remoto en el sistema Windows, una vez que tengamos las credenciales correctas."
 
 
