@@ -1,7 +1,7 @@
 ---
 layout: single
 title: Evil IntrudeR - Bash Script para Auditoría Wi-Fi
-excerpt: "Hoy presentaré el análisis de una herramienta que desarrollé en Bash para automatizar tareas de auditoría Wi-Fi, explicando su funcionamiento."
+excerpt: "Hoy presentaré el análisis de una herramienta que desarrollé en Bash para automatizar tareas de auditoría Wi-Fi con airmon-ng, macchanger, john y cowpatty. Explicaré de forma breve cómo funciona esta herramienta y sus funciones."
 date: 2025-11-11
 classes: wide
 header:
@@ -23,7 +23,7 @@ tags:
 
 # Introducción
 
-Hola a todos, hoy les presentaré el análisis de un script llamado **Evil IntrudeR**, diseñado para automatizar tareas comunes en auditorías de redes Wi-Fi.
+Hoy presentaré el análisis de una herramienta que desarrollé en Bash para automatizar tareas de auditoría Wi-Fi con airmon-ng, macchanger, john y cowpatty. Explicaré de forma breve cómo funciona esta herramienta y sus funciones
 
 Este script reúne y automatiza herramientas como:
 
