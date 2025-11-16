@@ -5,7 +5,7 @@ excerpt: "Hoy presentaré el análisis de una herramienta que desarrollé en Bas
 date: 2025-11-11
 classes: wide
 header:
-  teaser: /assets/images/evil-intruder.png
+  teaser: /assets/images/2025-11-11-Evil-Intruder-python-scripting.md/evil-intruder.png
 categories:
   - Pentesting
   - Bash
