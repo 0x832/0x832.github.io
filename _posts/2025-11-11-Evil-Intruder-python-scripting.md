@@ -16,6 +16,9 @@ tags:
   - Automatización
 ---
 
+
+![](/assets/images/2025-11-11-Evil-Intruder-python-scripting/evil-intruder.png)
+
 # Introducción
 
 Hola a todos, hoy les presentaré el análisis de un script llamado **Evil IntrudeR**, diseñado para automatizar tareas comunes en auditorías de redes Wi-Fi.
