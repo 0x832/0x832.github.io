@@ -5,7 +5,8 @@ excerpt: "Hoy presentaré el análisis de una herramienta que desarrollé en Bas
 date: 2025-11-11
 classes: wide
 header:
-  teaser: "{{ site.baseurl }}/assets/images/2025-11-11-Evil-Intruder-python-scripting/evil-intruder.png"
+  teaser: /assets/images/2025-11-11-Evil-Intruder-python-scripting/evil-intruder.png
+  teaser_home_page: true
 
 categories:
   - Pentesting
@@ -15,11 +16,6 @@ tags:
   - Auditoría Wi-Fi
   - Bash
   - Automatización
-
-<p align="center">
-  <img src="/assets/images/2025-11-11-Evil-Intruder-python-scripting/evil-intruder.png" alt="Evil IntrudeR" style="max-width:100%; border-radius:10px;">
-</p>
-
 ---
 
 
