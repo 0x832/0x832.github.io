@@ -15,6 +15,11 @@ tags:
   - Auditoría Wi-Fi
   - Bash
   - Automatización
+
+<p align="center">
+  <img src="/assets/images/2025-11-11-Evil-Intruder-python-scripting/evil-intruder.png" alt="Evil IntrudeR" style="max-width:100%; border-radius:10px;">
+</p>
+
 ---
 
 
