@@ -1,6 +1,6 @@
 ---
 layout: single
-title: Resolución de A4 Webgoat
+title: Resolución de A4 SQL injection introduction Webgoat
 excerpt: "En este artículo veremos cómo resolver la introducción de sql injection del apartado A4 de Webgoat de forma rápida y fácil"
 date: 2025-12-12
 classes: wide
