@@ -25,6 +25,7 @@ En este artículo veremos cómo resolver los ejercicios SQL Injection Advanced d
 En este ejercicio tendremos que conseguir los datos de una tabla sin permisos usando otra tabla con permisos
 
 Empezaremos con un **'or 1=1 --**
+
 ![](/assets/images/2025-12-13-A3-Injection-advanced/sql5.8.png)
 
 ![](/assets/images/2025-12-13-A3-Injection-advanced/sql3.1.png)
@@ -37,6 +38,7 @@ Empezaremos con un **'or 1=1 --**
 
 ## Ejercicio 5
 En este ejercicio tendremos que detectar el campo vulnerable, en este caso es el apartado de **username**. 
+
 ![](/assets/images/2025-12-13-A3-Injection-advanced/sql5.1.png)
 
 
