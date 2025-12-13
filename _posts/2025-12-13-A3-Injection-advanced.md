@@ -2,7 +2,7 @@
 layout: single
 title: Resolución de A4 Webgoat
 excerpt: "En este artículo veremos cómo resolver los ejercicios SQL Injection Advanced del apartado A4 de Webgoat de forma rápida y fácil"
-date: 2025-12-12
+date: 2025-12-13
 classes: wide
 header:
   teaser: /assets/images/2025-12-13-A3-Injection-advanced/sqlintrro.png
