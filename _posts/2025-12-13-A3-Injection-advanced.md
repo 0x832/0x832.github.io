@@ -68,5 +68,4 @@ Una vez tenemos la contraseña debería verse algo así
 
 ## Finalización
 
-Espero que hayan aprendido mucho y que esta explicación les haya servido para entender mejor cómo funcionan las SQL injection. Muchas gracias por leer el artículo, y no olviden seguirme en Github. Si quieren descargar mi tool les dejo aquí el acceso directo 
-<a href="https://github.com/0x832">0x832</a> además iré subiendo resoluciones de máquinas de HTB, TryHackMe y más herramientas que vaya desarrollando.
+Espero que hayan aprendido mucho y que esta explicación les haya servido para entender mejor cómo funcionan las SQL injection. Muchas gracias por leer el artículo, y no olviden seguirme en Github <a href="https://github.com/0x832">0x832</a> además iré subiendo resoluciones de máquinas de HTB, TryHackMe y más herramientas que vaya desarrollando.
