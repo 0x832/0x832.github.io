@@ -1,7 +1,7 @@
 ---
 layout: single
-title: Resolución de A4 SQL injection introduction Webgoat
-excerpt: "En este artículo veremos cómo resolver la introducción de sql injection del apartado A4 de Webgoat de forma rápida y fácil"
+title: Resolución de A3 SQL injection introduction Webgoat
+excerpt: "En este artículo veremos cómo resolver la introducción de sql injection del apartado A3 de Webgoat de forma rápida y fácil"
 date: 2025-12-12
 classes: wide
 header:
@@ -17,7 +17,7 @@ tags:
 
 ![](/assets/images/2025-12-12-Webgoat-A4/introduccion.png)
 
-En este artículo veremos cómo resolver la introducción de sql injection del apartado A4 de Webgoat de forma rápida y fácil
+En este artículo veremos cómo resolver la introducción de sql injection del apartado A3 de Webgoat de forma rápida y fácil
 ---
 
 # SQL Injection(Intro)
