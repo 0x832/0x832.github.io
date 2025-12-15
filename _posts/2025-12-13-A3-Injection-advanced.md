@@ -1,7 +1,7 @@
 ---
 layout: single
 title: Resolución de A3 SQL Injection Advanced-Webgoat
-excerpt: "En este artículo veremos cómo resolver los ejercicios SQL Injection Advanced del apartado A4 de Webgoat de forma rápida y fácil"
+excerpt: "En este artículo veremos cómo resolver los ejercicios SQL Injection Advanced del apartado A3 de Webgoat de forma rápida y fácil"
 date: 2025-12-13
 classes: wide
 header:
@@ -17,7 +17,7 @@ tags:
 
 ![](/assets/images/2025-12-13-A3-Injection-advanced/sqlintrro.png)
 
-En este artículo veremos cómo resolver los ejercicios SQL Injection Advanced del apartados A4 de Webgoat de forma rápida y fácil
+En este artículo veremos cómo resolver los ejercicios SQL Injection Advanced del apartados A3 de Webgoat de forma rápida y fácil
 
 ---
 
