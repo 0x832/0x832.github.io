@@ -1,0 +1,592 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.15.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Evil IntrudeR - Bash Script para Auditoría Wi-Fi - Hacktivo.io</title>
+<meta name="description" content="Hoy presentaré el análisis de una herramienta que desarrollé en Bash para automatizar tareas de auditoría Wi-Fi con airmon-ng, macchanger, john y cowpatty. Explicaré de forma breve cómo funciona esta herramienta y sus funciones.">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Hacktivo.io">
+<meta property="og:title" content="Evil IntrudeR - Bash Script para Auditoría Wi-Fi">
+<meta property="og:url" content="http://0.0.0.0:4000/Evil-Intruder-bash-scripting/">
+
+
+  <meta property="og:description" content="Hoy presentaré el análisis de una herramienta que desarrollé en Bash para automatizar tareas de auditoría Wi-Fi con airmon-ng, macchanger, john y cowpatty. Explicaré de forma breve cómo funciona esta herramienta y sus funciones.">
+
+
+
+  <meta property="og:image" content="http://0.0.0.0:4000/assets/images/2025-11-11-Evil-Intruder-python-scripting/evil-intruder.png">
+
+
+
+
+
+  <meta property="article:published_time" content="2025-11-11T00:00:00+00:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://0.0.0.0:4000/Evil-Intruder-bash-scripting/">
+
+
+
+
+
+
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "0x832",
+      "url": "http://0.0.0.0:4000",
+      "sameAs": null
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Hacktivo.io Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/portfolio.css?v=1783946214">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single wide">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+          <a class="site-logo" href="/"><img src="/assets/images/0x832.png" alt=""></a>
+                
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/" >Inicio</a>
+            </li><li class="masthead__menu-item">
+              <a href="/#trabajo" >Trabajo</a>
+            </li><li class="masthead__menu-item">
+              <a href="/#especialidades" >Especialidades</a>
+            </li><li class="masthead__menu-item">
+              <a href="/explorar/" >Explorar</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+    
+
+    <div class="initial-content">
+      
+
+
+  
+    
+
+
+
+<nav class="breadcrumbs">
+  <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+    
+    
+    
+      
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="http://0.0.0.0:4000/" itemprop="item"><span itemprop="name">Home</span></a>
+          <meta itemprop="position" content="1" />
+        </li>
+        <span class="sep">/</span>
+      
+      
+        <li class="current">Evil IntrudeR - Bash Script para Auditoría Wi-Fi</li>
+      
+    
+  </ol>
+</nav>
+
+  
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+
+      
+        <img src="/assets/images/avatar.png" alt="0x832" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">0x832</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        Pentesting y programación
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+        <li>
+          <a href="https://github.com/0x832" itemprop="sameAs" rel="nofollow noopener noreferrer">
+            <i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Evil IntrudeR - Bash Script para Auditoría Wi-Fi">
+    <meta itemprop="description" content="Hoy presentaré el análisis de una herramienta que desarrollé en Bash para automatizar tareas de auditoría Wi-Fi con airmon-ng, macchanger, john y cowpatty. Explicaré de forma breve cómo funciona esta herramienta y sus funciones.">
+    <meta itemprop="datePublished" content="November 11, 2025">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Evil IntrudeR - Bash Script para Auditoría Wi-Fi
+</h1>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p class="page__meta">
+          
+            <i class="fa fa-fw fa-calendar" aria-hidden="true"></i> <time datetime="2025-11-11T00:00:00+00:00">November 11, 2025 </time>&emsp;
+          
+          
+        </p>
+        <p><img src="/assets/images/2025-11-11-Evil-Intruder-python-scripting/evil-intruder.png" alt="" /></p>
+
+<h1 id="introducción">Introducción</h1>
+
+<p>Hoy presentaré el análisis de una herramienta que desarrollé en Bash para automatizar tareas de auditoría Wi-Fi con airmon-ng, macchanger, john y cowpatty. Explicaré de forma breve cómo funciona esta herramienta y sus funciones</p>
+
+<p>Este script reúne y automatiza herramientas como:</p>
+
+<ul>
+  <li><strong>airmon-ng</strong> → Activar modo monitor.</li>
+  <li><strong>airodump-ng</strong> → Captura de tráfico.</li>
+  <li><strong>aireplay-ng</strong> → Pruebas de desautenticación.</li>
+  <li><strong>macchanger</strong> → Cambio de MAC.</li>
+  <li><strong>tshark</strong> → Análisis de tráfico DNS/HTTP.</li>
+  <li><strong>airdecap-ng</strong> → Descifrado de capturas WPA/WPA2.</li>
+  <li><strong>cowpatty / genpmk / john / aircrack-ng</strong> → Ataques de diccionario sobre handshakes.</li>
+</ul>
+
+<p><strong>Aviso ético:</strong> Todo lo que se explica debe realizarse exclusivamente en entornos controlados (laboratorios, CTFs) y con autorización. El objetivo es aprender cómo funcionan estas técnicas, no aplicarlas de forma indebida.</p>
+
+<hr />
+
+<h2 id="reconocimiento-del-script">Reconocimiento del Script</h2>
+
+<p>Estructura general del programa:</p>
+
+<ul>
+  <li><strong>Menú interactivo</strong> con opciones numeradas.</li>
+  <li><strong>Comprobación de privilegios</strong> (<code class="language-plaintext highlighter-rouge">root()</code>).</li>
+  <li><strong>Funciones modulares</strong> para cada tarea (activar modo monitor, escaneo, análisis, etc.).</li>
+  <li><strong>Automatización</strong> de comandos complejos para reducir errores.</li>
+</ul>
+
+<p>El flujo principal está en la función <code class="language-plaintext highlighter-rouge">main()</code>, que coordina la ejecución según la opción elegida.</p>
+
+<hr />
+
+<h2 id="funciones-clave-y-herramientas-automatizadas">Funciones Clave y Herramientas Automatizadas</h2>
+
+<h3 id="1-root">1. <strong>root()</strong></h3>
+<p>Comprueba si el usuario tiene permisos de superusuario (<code class="language-plaintext highlighter-rouge">EUID</code>).</p>
+<ul>
+  <li>Herramientas como <code class="language-plaintext highlighter-rouge">airmon-ng</code> necesitan acceso al hardware.</li>
+  <li>Por eso, si no somos root, la herramienta lo solicita.</li>
+</ul>
+
+<hr />
+
+<h3 id="2-inicio">2. <strong>inicio()</strong></h3>
+<p>Presenta un menú con opciones como:</p>
+<ul>
+  <li>Activar modo monitor.</li>
+  <li>Escanear redes.</li>
+  <li>Ejecutar ataques simulados.</li>
+  <li>Analizar capturas.</li>
+</ul>
+
+<p><strong>Automatización:</strong><br />
+Gracias a este menú evitamos escribir comandos manualmente y reducimos errores al trabajar.</p>
+
+<hr />
+
+<h2 id="3-modo_monitor1-y-activar_modo_monitor">3. <strong>modo_monitor1() y activar_modo_monitor()</strong></h2>
+<p>Activa el <strong>modo monitor</strong> en la tarjeta de red mediante <code class="language-plaintext highlighter-rouge">airmon-ng</code>.<br />
+Opcionalmente permite cambiar la MAC con <code class="language-plaintext highlighter-rouge">macchanger</code>.</p>
+
+<p><strong>Concepto de ciberseguridad:</strong></p>
+<ul>
+  <li>El modo monitor sirve para capturar tráfico inalámbrico.</li>
+  <li>Cambiar la MAC ayuda a mantener anonimato durante pruebas.</li>
+</ul>
+
+<hr />
+
+<h2 id="4-scan_wifis3-y-scan_wifi_en_concreto4">4. <strong>scan_wifis3() y scan_wifi_en_concreto4()</strong></h2>
+<p>Automatiza <code class="language-plaintext highlighter-rouge">airodump-ng</code> para:</p>
+<ul>
+  <li>Escanear todas las redes cercanas.</li>
+  <li>Capturar tráfico de una red concreta (BSSID/ESSID + canal).</li>
+</ul>
+
+<hr />
+
+<h2 id="5-ataque_beacon_flood5">5. <strong>Ataque_Beacon_Flood5()</strong></h2>
+<p>Genera múltiples AP falsos con <code class="language-plaintext highlighter-rouge">mdk3</code>.</p>
+
+<p><strong>Objetivo:</strong></p>
+<ul>
+  <li>Analizar ataques de denegación de servicio en Wi-Fi.</li>
+  <li>Sobrecargar el canal hasta provocar saturación en las redes del entorno.</li>
+</ul>
+
+<hr />
+
+<h2 id="6-expultar_a_la_gente6">6. <strong>expultar_a_la_gente6()</strong></h2>
+<p>Simula desautenticación mediante <code class="language-plaintext highlighter-rouge">aireplay-ng</code>.</p>
+
+<p>Esta función permite expulsar temporalmente a usuarios de una red para capturar el handshake.</p>
+
+<hr />
+
+<h2 id="7-brutal_force7">7. <strong>brutal_force7()</strong></h2>
+<p>Integra varias herramientas:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">aircrack-ng</code>, <code class="language-plaintext highlighter-rouge">john</code>, <code class="language-plaintext highlighter-rouge">cowpatty</code>, <code class="language-plaintext highlighter-rouge">genpmk</code>.</li>
+</ul>
+
+<p><strong>Propósito:</strong></p>
+<ul>
+  <li>Auditar contraseñas débiles en entornos controlados.</li>
+</ul>
+
+<hr />
+
+<h2 id="8-analisi_de_captura">8. <strong>analisi_De_captura()</strong></h2>
+<p>Descifra tráfico con <code class="language-plaintext highlighter-rouge">airdecap-ng</code> y analiza DNS/HTTP con <code class="language-plaintext highlighter-rouge">tshark</code>.</p>
+
+<p>Permite evaluar riesgos en redes con cifrado débil o mal configurado.</p>
+
+<hr />
+
+<h2 id="herramientas-automatizadas-y-su-rol">Herramientas Automatizadas y su Rol</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Herramienta</th>
+      <th>Función principal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>airmon-ng</strong></td>
+      <td>Activar/desactivar modo monitor</td>
+    </tr>
+    <tr>
+      <td><strong>airodump-ng</strong></td>
+      <td>Captura de tráfico Wi-Fi</td>
+    </tr>
+    <tr>
+      <td><strong>aireplay-ng</strong></td>
+      <td>Inyección de paquetes (desautenticación)</td>
+    </tr>
+    <tr>
+      <td><strong>macchanger</strong></td>
+      <td>Cambio de dirección MAC</td>
+    </tr>
+    <tr>
+      <td><strong>aircrack-ng</strong></td>
+      <td>Ataque de diccionario sobre handshakes WPA/WPA2</td>
+    </tr>
+    <tr>
+      <td><strong>cowpatty</strong></td>
+      <td>Fuerza bruta con PMK</td>
+    </tr>
+    <tr>
+      <td><strong>genpmk</strong></td>
+      <td>Generación de diccionarios precomputados</td>
+    </tr>
+    <tr>
+      <td><strong>john</strong></td>
+      <td>Cracking avanzado de hashes WPA</td>
+    </tr>
+    <tr>
+      <td><strong>tshark</strong></td>
+      <td>Análisis de tráfico DNS/HTTP</td>
+    </tr>
+    <tr>
+      <td><strong>airdecap-ng</strong></td>
+      <td>Descifrado de capturas</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="buenas-prácticas-y-defensa">Buenas prácticas y defensa</h2>
+
+<ul>
+  <li><strong>WPA3</strong> y contraseñas robustas.</li>
+  <li>Deshabilitar <strong>WPS</strong>.</li>
+  <li>Implementar <strong>IDS/IPS</strong> para redes inalámbricas.</li>
+  <li>Cifrado DNS y uso estricto de <strong>HTTPS</strong>.</li>
+</ul>
+
+<hr />
+
+<h2 id="finalización">Finalización</h2>
+
+<p>Espero que hayan aprendido mucho y que esta explicación les haya servido para entender mejor cómo se puede comprometer una red Wi-Fi en un entorno controlado. Muchas gracias por leer el artículo, y no olviden seguirme en Github. no obstante si quieren descargar mi tool les dejó aquí el acceso directo 
+<a href="https://github.com/0x832/Evil-Intruder">evil-intruder</a>: además iré subiendo resoluciones de máquinas de HTB, TryHackMe y más herramientas que vaya desarrollando.</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      
+      <a href="/explorar/#cat-herramientas" class="page__taxonomy-item" rel="category">Herramientas</a><span class="sep">, </span>
+    
+      
+      
+      
+      <a href="/explorar/#cat-wi-fi" class="page__taxonomy-item" rel="category">Wi-Fi</a>
+    
+    </span>
+  </p>
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2025-11-11T00:00:00+00:00">November 11, 2025</time></p>
+        
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/HakckMyVM-Lia-easy/" class="pagination--pager" title="Liar (Windows) Writeup
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+</div>
+
+    </div>
+
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 0x832</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+  <script data-search-pseudo-elements defer src="https://use.fontawesome.com/releases/v5.7.1/js/all.js" integrity="sha384-eVEQC9zshBn0rFj4+TU78eNA19HMNigMviK/PU/FFjLXqa/GKPgX58rvt5Z8PLs7" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+  </body>
+</html>
