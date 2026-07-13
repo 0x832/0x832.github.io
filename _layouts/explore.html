@@ -1,0 +1,210 @@
+---
+layout: default
+---
+
+{% assign sorted_categories = site.categories | sort %}
+{% assign sorted_tags = site.tags | sort %}
+
+<main class="explore-page" id="content">
+  <div class="explore-shell">
+    <header class="explore-header">
+      <p class="portfolio-kicker">Mapa de contenido</p>
+      <h1 id="page-title">{{ page.title }}</h1>
+      <div class="explore-stats" aria-label="Resumen">
+        <span><strong>{{ site.posts | size }}</strong> posts</span>
+        <span><strong>{{ site.categories | size }}</strong> categorias</span>
+        <span><strong>{{ site.tags | size }}</strong> tags</span>
+      </div>
+    </header>
+
+    <div class="explore-layout">
+      <aside class="explore-filters" aria-label="Filtros" data-filter-panel>
+        <button class="explore-filter-toggle" type="button" aria-expanded="false" aria-controls="explore-filter-body">
+          <span data-filter-toggle-label>Filtros</span>
+          <strong data-filter-toggle-count>{{ site.posts | size }}</strong>
+        </button>
+        <div class="explore-filter-body" id="explore-filter-body">
+        <a class="explore-filter is-active" href="#all" data-filter-type="all" data-filter-value="all">
+          <span>Todos</span>
+          <strong>{{ site.posts | size }}</strong>
+        </a>
+
+        <section class="explore-filter-group" aria-labelledby="explore-categories-title">
+          <h2 id="explore-categories-title">Categorias</h2>
+          <div class="explore-filter-list">
+            {% for category in sorted_categories %}
+              {% assign name = category[0] %}
+              {% assign slug = name | slugify %}
+              <a id="cat-{{ slug }}" class="explore-filter" href="#cat-{{ slug }}" data-filter-type="category" data-filter-value="{{ slug }}">
+                <span>{{ name }}</span>
+                <strong>{{ category[1] | size }}</strong>
+              </a>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="explore-filter-group" aria-labelledby="explore-tags-title">
+          <h2 id="explore-tags-title">Tags</h2>
+          <div class="explore-filter-list">
+            {% for tag in sorted_tags %}
+              {% assign name = tag[0] %}
+              {% assign slug = name | slugify %}
+              <a id="tag-{{ slug }}" class="explore-filter" href="#tag-{{ slug }}" data-filter-type="tag" data-filter-value="{{ slug }}">
+                <span>{{ name }}</span>
+                <strong>{{ tag[1] | size }}</strong>
+              </a>
+            {% endfor %}
+          </div>
+        </section>
+        </div>
+      </aside>
+
+      <section class="explore-results" aria-live="polite">
+        <div class="explore-results__bar">
+          <h2 data-filter-label>Todos los posts</h2>
+          <span class="explore-results__count" data-count>{{ site.posts | size }}</span>
+        </div>
+
+        <div class="explore-grid">
+          {% for post in site.posts %}
+            {% capture post_categories %}{% for category in post.categories %}{{ category | slugify }} {% endfor %}{% endcapture %}
+            {% capture post_tags %}{% for tag in post.tags %}{{ tag | slugify }} {% endfor %}{% endcapture %}
+            <article class="explore-card" data-categories="{{ post_categories | strip }}" data-tags="{{ post_tags | strip }}">
+              {% if post.header.teaser %}
+                <a class="explore-card__media" href="{{ post.url | relative_url }}" aria-label="{{ post.title | escape }}">
+                  <img src="{{ post.header.teaser | relative_url }}" alt="">
+                </a>
+              {% endif %}
+
+              <div class="explore-card__body">
+                <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%d/%m/%Y" }}</time>
+                <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+                <p>{{ post.excerpt | markdownify | strip_html | strip_newlines | truncate: 170 }}</p>
+
+                {% if post.categories %}
+                  <div class="explore-card__chips">
+                    {% for category in post.categories %}
+                      <a href="#cat-{{ category | slugify }}" data-filter-type="category" data-filter-value="{{ category | slugify }}">{{ category }}</a>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+
+                {% if post.tags %}
+                  <div class="explore-card__chips explore-card__chips--muted">
+                    {% for tag in post.tags limit: 5 %}
+                      <a href="#tag-{{ tag | slugify }}" data-filter-type="tag" data-filter-value="{{ tag | slugify }}">{{ tag }}</a>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+
+        <p class="explore-empty" hidden>Sin posts para este filtro.</p>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script>
+  (function () {
+    var page = document.querySelector(".explore-page");
+    if (!page) return;
+
+    var filters = Array.prototype.slice.call(page.querySelectorAll("[data-filter-type]"));
+    var cards = Array.prototype.slice.call(page.querySelectorAll(".explore-card"));
+    var filterPanel = page.querySelector("[data-filter-panel]");
+    var filterToggle = page.querySelector(".explore-filter-toggle");
+    var filterBody = page.querySelector(".explore-filter-body");
+    var toggleLabel = page.querySelector("[data-filter-toggle-label]");
+    var toggleCount = page.querySelector("[data-filter-toggle-count]");
+    var results = page.querySelector(".explore-results");
+    var count = page.querySelector("[data-count]");
+    var label = page.querySelector("[data-filter-label]");
+    var empty = page.querySelector(".explore-empty");
+
+    function isMobileFilterPanel() {
+      return window.matchMedia("(max-width: 760px)").matches;
+    }
+
+    function syncFilterPanel() {
+      if (!filterBody || !filterPanel || !filterToggle) return;
+      var isOpen = filterPanel.classList.contains("is-open");
+      if (!isMobileFilterPanel()) {
+        filterBody.hidden = false;
+        filterToggle.setAttribute("aria-expanded", "false");
+        return;
+      }
+      filterBody.hidden = !isOpen;
+      filterToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    }
+
+    function filterFromHash() {
+      var hash = decodeURIComponent(window.location.hash.replace("#", ""));
+      if (!hash || hash === "all") return { type: "all", value: "all" };
+      if (hash.indexOf("cat-") === 0) return { type: "category", value: hash.replace("cat-", "") };
+      if (hash.indexOf("tag-") === 0) return { type: "tag", value: hash.replace("tag-", "") };
+      return { type: "all", value: "all" };
+    }
+
+    function applyFilter(next) {
+      var visible = 0;
+
+      filters.forEach(function (filter) {
+        var isActive = filter.getAttribute("data-filter-type") === next.type &&
+          filter.getAttribute("data-filter-value") === next.value;
+        filter.classList.toggle("is-active", isActive);
+      });
+
+      cards.forEach(function (card) {
+        var values = next.type === "tag" ? card.dataset.tags : card.dataset.categories;
+        var shouldShow = next.type === "all" || (" " + values + " ").indexOf(" " + next.value + " ") !== -1;
+        card.hidden = !shouldShow;
+        if (shouldShow) visible += 1;
+      });
+
+      if (count) count.textContent = visible;
+      if (toggleCount) toggleCount.textContent = visible;
+      if (results) results.classList.toggle("is-single-result", visible === 1);
+      if (label || toggleLabel) {
+        var activeFilter = page.querySelector(".explore-filter.is-active span");
+        var filterText = next.type === "all" ? "Todos los posts" : "Filtro: " + (activeFilter ? activeFilter.textContent : "seleccionado");
+        if (label) label.textContent = filterText;
+        if (toggleLabel) toggleLabel.textContent = filterText;
+      }
+      if (empty) empty.hidden = visible !== 0;
+    }
+
+    if (filterToggle && filterPanel) {
+      filterToggle.addEventListener("click", function () {
+        var isOpen = !filterPanel.classList.contains("is-open");
+        filterPanel.classList.toggle("is-open", isOpen);
+        syncFilterPanel();
+      });
+    }
+
+    page.addEventListener("click", function (event) {
+      var trigger = event.target.closest("[data-filter-type]");
+      if (!trigger) return;
+      applyFilter({
+        type: trigger.getAttribute("data-filter-type"),
+        value: trigger.getAttribute("data-filter-value")
+      });
+      if (filterPanel && filterToggle && window.matchMedia("(max-width: 760px)").matches) {
+        filterPanel.classList.remove("is-open");
+        syncFilterPanel();
+      }
+    });
+
+    window.addEventListener("resize", syncFilterPanel);
+
+    window.addEventListener("hashchange", function () {
+      syncFilterPanel();
+      applyFilter(filterFromHash());
+    });
+
+    syncFilterPanel();
+    applyFilter(filterFromHash());
+  })();
+</script>

@@ -1,0 +1,151 @@
+---
+layout: default
+---
+
+<main class="portfolio-home" id="content">
+  <section class="portfolio-hero" aria-labelledby="portfolio-title">
+    <div class="portfolio-shell portfolio-hero__inner">
+      <div class="portfolio-hero__copy">
+        <p class="portfolio-kicker">Pentesting &middot; tooling &middot; labs</p>
+        <h1 id="portfolio-title">0x832</h1>
+        <p class="portfolio-hero__lead">
+          Ciberseguridad pr&aacute;ctica, writeups y herramientas propias.
+        </p>
+        <div class="portfolio-actions" aria-label="Acciones principales">
+          <a class="portfolio-button portfolio-button--primary" href="#trabajo">Ver trabajo</a>
+          <a class="portfolio-button" href="https://github.com/0x832">GitHub</a>
+        </div>
+      </div>
+
+      <div class="portfolio-hero__visual" aria-hidden="true">
+        <div class="portfolio-terminal">
+          <div class="portfolio-terminal__bar">
+            <span></span><span></span><span></span>
+            <strong>lab@0x832</strong>
+          </div>
+          <div class="portfolio-terminal__body">
+            <p><span>$</span> nmap -sV target</p>
+            <p class="portfolio-terminal__ok">22/tcp open ssh</p>
+            <p class="portfolio-terminal__ok">80/tcp open http</p>
+            <p><span>$</span> exploit --notes clean</p>
+            <p class="portfolio-terminal__accent">root@lab:~# writeup --publish</p>
+          </div>
+        </div>
+
+        <div class="portfolio-hero__metrics">
+          <div class="portfolio-signal">
+            <strong>{{ site.posts | size }}</strong>
+            <span>posts vivos</span>
+          </div>
+          <div class="portfolio-signal">
+            <strong>HTB</strong>
+            <span>labs + tooling</span>
+          </div>
+        </div>
+
+        <div class="portfolio-trace">
+          <span>Recon</span><i></i><span>Exploit</span><i></i><span>Writeup</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="portfolio-strip" aria-label="Resumen">
+    <div class="portfolio-shell portfolio-strip__grid">
+      <div><strong>{{ site.posts | size }}</strong><span>artículos activos</span></div>
+      <div><strong>HTB</strong><span>writeups técnicos</span></div>
+      <div><strong>Labs</strong><span>entornos vulnerables</span></div>
+      <div><strong>Tools</strong><span>scripts propios</span></div>
+    </div>
+  </section>
+
+  <section class="portfolio-section" id="trabajo">
+    <div class="portfolio-shell">
+      <div class="portfolio-section__header">
+        <p class="portfolio-kicker">Trabajo destacado</p>
+        <h2>Trabajo destacado.</h2>
+      </div>
+
+      <div class="portfolio-feature-grid">
+        {% assign featured_posts = site.posts | slice: 0, 3 %}
+        {% for post in featured_posts %}
+          <article class="portfolio-card portfolio-card--feature">
+            {% if post.header.teaser %}
+              <a class="portfolio-card__media" href="{{ post.url | relative_url }}" aria-label="{{ post.title | escape }}">
+                <img src="{{ post.header.teaser | relative_url }}" alt="">
+              </a>
+            {% endif %}
+            <div class="portfolio-card__body">
+              <p class="portfolio-card__meta">{{ post.date | date: "%d %b %Y" }}</p>
+              <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+              <p>{{ post.excerpt | strip_html | strip_newlines | truncate: 150 }}</p>
+              {% if post.tags %}
+                <div class="portfolio-tags">
+                  {% for tag in post.tags limit: 3 %}
+                    <span>{{ tag }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="portfolio-section portfolio-section--alt" id="especialidades">
+    <div class="portfolio-shell">
+      <div class="portfolio-section__header">
+        <p class="portfolio-kicker">Especialidades</p>
+        <h2>Qué vas a encontrar aquí.</h2>
+      </div>
+
+      <div class="portfolio-focus-grid">
+        <article class="portfolio-focus">
+          <span>01</span>
+          <h3>Writeups y explotación</h3>
+          <p>Resoluciones de máquinas, enumeración, explotación, escalada de privilegios y notas técnicas explicadas paso a paso.</p>
+        </article>
+        <article class="portfolio-focus">
+          <span>02</span>
+          <h3>Herramientas propias</h3>
+          <p>Scripts en Python y Bash para automatizar tareas, probar ideas y convertir aprendizaje en proyectos reutilizables.</p>
+        </article>
+        <article class="portfolio-focus">
+          <span>03</span>
+          <h3>Laboratorios</h3>
+          <p>Montaje de laboratorios controlados, Docker, redes y servicios preparados para practicar de forma segura.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="portfolio-section portfolio-section--taxonomy" id="mapa">
+    <div class="portfolio-shell">
+      <div class="portfolio-section__header">
+        <p class="portfolio-kicker">Mapa de contenido</p>
+        <h2>Explora por área.</h2>
+      </div>
+
+      <div class="portfolio-taxonomy-grid">
+        {% assign sorted_categories = site.categories | sort %}
+        {% for category in sorted_categories %}
+          {% assign name = category[0] %}
+          {% assign posts = category[1] %}
+          <a class="portfolio-taxonomy" href="/explorar/#cat-{{ name | slugify }}">
+            <strong>{{ name }}</strong>
+            <span>{{ posts | size }} artículos</span>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="portfolio-cta" id="contacto">
+    <div class="portfolio-shell">
+      <p class="portfolio-kicker">Siguiente paso</p>
+      <h2>Para más contenido técnico, puedes mirar mi GitHub.</h2>
+      <a class="portfolio-button portfolio-button--primary" href="https://github.com/0x832">Ver repositorios</a>
+    </div>
+  </section>
+</main>
